@@ -1,15 +1,15 @@
 {
-  "name": "companion-module-lightkey",
-  "version": "1.0.0",
-  "description": "Control Lightkey software",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "companion-module-lightkey"
-  },
-  "author": "Drew Killeen",
-  "license": "ISC"
+	"name": "companion-module-lightkey",
+	"version": "1.0.0",
+	"description": "Lightkey 4 module for Companion",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "companion-module-lightkey"
+	},
+	"author": "Drew Killeen",
+	"license": "ISC"
 }
