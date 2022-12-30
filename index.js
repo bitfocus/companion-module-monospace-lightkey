@@ -1,4 +1,4 @@
-const instance_skel = require('../../instance_skel');
+var instance_skel = require('../../instance_skel');
 var debug;
 var log;
 var groupPos = [];
@@ -87,7 +87,7 @@ instance.prototype.destroy = function () {
 
 instance.prototype.actions = function (system) {
 	var self = this;
-	self.system.emit('instance_actions', self.id, {
+	self.setActions({
 		triggerClip: {
 			label: 'Start Clip',
 			options: [
@@ -308,8 +308,7 @@ instance.prototype.action = function (action) {
 			'/composition/layers/' + action.options.layer + '/clips/' + action.options.column + '/connect',
 			[bol]
 		);
-		self.system.emit(
-			'osc_send',
+		self.oscSend(
 			self.config.host,
 			self.config.port,
 			'/composition/layers/' + action.options.layer + '/clips/' + action.options.column + '/connect',
@@ -327,13 +326,9 @@ instance.prototype.action = function (action) {
 		debug('sending', self.config.host, self.config.port, '/composition/columns/' + action.options.column + '/connect', [
 			bol,
 		]);
-		self.system.emit(
-			'osc_send',
-			self.config.host,
-			self.config.port,
-			'/composition/columns/' + action.options.column + '/connect',
-			[bol]
-		);
+		self.oscSend(self.config.host, self.config.port, '/composition/columns/' + action.options.column + '/connect', [
+			bol,
+		]);
 	}
 
 	if (action.action == 'clearLayer') {
@@ -344,13 +339,7 @@ instance.prototype.action = function (action) {
 		debug('sending', self.config.host, self.config.port, '/composition/layers/' + action.options.layer + '/clear', [
 			bol,
 		]);
-		self.system.emit(
-			'osc_send',
-			self.config.host,
-			self.config.port,
-			'/composition/layers/' + action.options.layer + '/clear',
-			[bol]
-		);
+		self.oscSend(self.config.host, self.config.port, '/composition/layers/' + action.options.layer + '/clear', [bol]);
 		//sending second command with value 0 to reset the layer, else this command only works one time
 		var bol = {
 			type: 'i',
@@ -359,13 +348,7 @@ instance.prototype.action = function (action) {
 		debug('sending', self.config.host, self.config.port, '/composition/layers/' + action.options.layer + '/clear', [
 			bol,
 		]);
-		self.system.emit(
-			'osc_send',
-			self.config.host,
-			self.config.port,
-			'/composition/layers/' + action.options.layer + '/clear',
-			[bol]
-		);
+		self.oscSend(self.config.host, self.config.port, '/composition/layers/' + action.options.layer + '/clear', [bol]);
 	}
 
 	if (action.action == 'clearAll') {
@@ -374,7 +357,7 @@ instance.prototype.action = function (action) {
 			value: parseInt(1),
 		};
 		debug('sending', self.config.host, self.config.port, '/composition/disconnectall', [bol]);
-		self.system.emit('osc_send', self.config.host, self.config.port, '/composition/disconnectall', [bol]);
+		self.oscSend(self.config.host, self.config.port, '/composition/disconnectall', [bol]);
 	}
 
 	if (action.action == 'tempoTap') {
@@ -383,7 +366,7 @@ instance.prototype.action = function (action) {
 			value: parseInt(1),
 		};
 		debug('sending', self.config.host, self.config.port, '/composition/tempocontroller/tempotap', [bol]);
-		self.system.emit('osc_send', self.config.host, self.config.port, '/composition/tempocontroller/tempotap', [bol]);
+		self.oscSend(self.config.host, self.config.port, '/composition/tempocontroller/tempotap', [bol]);
 	}
 
 	if (action.action == 'custom') {
@@ -411,7 +394,7 @@ instance.prototype.action = function (action) {
 			];
 		}
 		debug('sending', self.config.host, self.config.port, action.options.customPath);
-		self.system.emit('osc_send', self.config.host, self.config.port, action.options.customPath, args);
+		self.oscSend(self.config.host, self.config.port, action.options.customPath, args);
 	}
 	if (action.action == 'grpNextCol') {
 		var bol = {
@@ -437,8 +420,7 @@ instance.prototype.action = function (action) {
 				groupPos[action.options.groupNext] +
 				'/connect'
 		);
-		self.system.emit(
-			'osc_send',
+		self.oscSend(
 			self.config.host,
 			self.config.port,
 			'/composition/groups/' +
@@ -474,8 +456,7 @@ instance.prototype.action = function (action) {
 				groupPos[action.options.groupPrev] +
 				'/connect'
 		);
-		self.system.emit(
-			'osc_send',
+		self.oscSend(
 			self.config.host,
 			self.config.port,
 			'/composition/groups/' +
@@ -497,13 +478,7 @@ instance.prototype.action = function (action) {
 		}
 
 		debug('sending', self.config.host, self.config.port, '/composition/columns/' + currentCompCol + '/connect');
-		self.system.emit(
-			'osc_send',
-			self.config.host,
-			self.config.port,
-			'/composition/columns/' + currentCompCol + '/connect',
-			[bol]
-		);
+		self.oscSend(self.config.host, self.config.port, '/composition/columns/' + currentCompCol + '/connect', [bol]);
 	}
 	if (action.action == 'compPrvCol') {
 		var bol = {
@@ -516,13 +491,7 @@ instance.prototype.action = function (action) {
 		}
 
 		debug('sending', self.config.host, self.config.port, '/composition/columns/' + currentCompCol + '/connect');
-		self.system.emit(
-			'osc_send',
-			self.config.host,
-			self.config.port,
-			'/composition/columns/' + currentCompCol + '/connect',
-			[bol]
-		);
+		self.oscSend(self.config.host, self.config.port, '/composition/columns/' + currentCompCol + '/connect', [bol]);
 	}
 	if (action.action == 'layNextCol') {
 		var bol = {
@@ -543,8 +512,7 @@ instance.prototype.action = function (action) {
 			self.config.port,
 			'/composition/layers/' + action.options.layerN + '/clips/' + layerPos[action.options.layerN] + '/connect'
 		);
-		self.system.emit(
-			'osc_send',
+		self.oscSend(
 			self.config.host,
 			self.config.port,
 			'/composition/layers/' + action.options.layerN + '/clips/' + layerPos[action.options.layerN] + '/connect',
@@ -570,8 +538,7 @@ instance.prototype.action = function (action) {
 			self.config.port,
 			'/composition/layers/' + action.options.layerP + '/clips/' + layerPos[action.options.layerP] + '/connect'
 		);
-		self.system.emit(
-			'osc_send',
+		self.oscSend(
 			self.config.host,
 			self.config.port,
 			'/composition/layers/' + action.options.layerP + '/clips/' + layerPos[action.options.layerP] + '/connect',
