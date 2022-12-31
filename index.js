@@ -88,178 +88,22 @@ instance.prototype.destroy = function () {
 instance.prototype.actions = function (system) {
 	var self = this;
 	self.setActions({
-		triggerClip: {
-			label: 'Start Clip',
+		blindMode: {
+			label: 'Blind Mode',
 			options: [
 				{
-					type: 'number',
-					label: 'Layer',
-					id: 'layer',
-					min: 1,
-					max: 100,
-					default: 1,
-					required: true,
-				},
-				{
-					type: 'number',
-					label: 'Column',
-					id: 'column',
-					min: 1,
-					max: 100,
-					default: 1,
-					required: true,
-				},
-			],
-		},
-		triggerColumn: {
-			label: 'Start Column',
-			options: [
-				{
-					type: 'number',
-					label: 'Column',
-					id: 'column',
-					min: 1,
-					max: 100,
-					default: 1,
-					required: true,
-				},
-			],
-		},
-		clearLayer: {
-			label: 'Clear Layer',
-			options: [
-				{
-					type: 'textinput',
-					label: 'Layer',
-					id: 'layer',
-					default: '1',
-				},
-			],
-		},
-		clearAll: {
-			label: 'Clear All Layers',
-		},
-		tempoTap: {
-			label: 'Tap Tempo',
-		},
-		grpNextCol: {
-			label: 'Group Next Column',
-			options: [
-				{
-					type: 'number',
-					label: 'Group Number',
-					id: 'groupNext',
-					min: 1,
-					max: 100,
-					default: 1,
-					required: true,
-				},
-				{
-					type: 'number',
-					label: 'Last Column',
-					id: 'colMaxGroupNext',
-					min: 1,
-					max: 100,
-					default: 4,
-					required: true,
-				},
-			],
-		},
-		grpPrvCol: {
-			label: 'Group Previous Column',
-			options: [
-				{
-					type: 'number',
-					label: 'Group Number',
-					id: 'groupPrev',
-					min: 1,
-					max: 100,
-					default: '1',
-					required: true,
-				},
-				{
-					type: 'number',
-					label: 'Last Column',
-					id: 'colMaxGroupPrev',
-					min: 1,
-					max: 100,
-					default: '4',
-					required: true,
-				},
-			],
-		},
-		compNextCol: {
-			label: 'Composition Next Column',
-			options: [
-				{
-					type: 'number',
-					label: 'Last (max) Column',
-					id: 'colMaxCompNext',
-					min: 1,
-					max: 100,
-					default: '4',
-					required: true,
-				},
-			],
-		},
-		compPrvCol: {
-			label: 'Composition Previous Column',
-			options: [
-				{
-					type: 'number',
-					label: 'Last (max) Column',
-					id: 'colMaxCompPrev',
-					min: 1,
-					max: 100,
-					default: '4',
-					required: true,
-				},
-			],
-		},
-		layNextCol: {
-			label: 'Layer Next Column',
-			options: [
-				{
-					type: 'number',
-					label: 'Layer Number',
-					id: 'layerN',
-					min: 1,
-					max: 100,
-					default: '1',
-					required: true,
-				},
-				{
-					type: 'number',
-					label: 'Last (max) Column',
-					id: 'colMaxLayerN',
-					min: 1,
-					max: 100,
-					default: '4',
-					required: true,
-				},
-			],
-		},
-		layPrvCol: {
-			label: 'Layer Previous Column',
-			options: [
-				{
-					type: 'number',
-					label: 'Layer Number',
-					id: 'layerP',
-					min: 1,
-					max: 100,
-					default: '1',
-					required: true,
-				},
-				{
-					type: 'number',
-					label: 'Last (max) Column',
-					id: 'colMaxLayerP',
-					min: 1,
-					max: 100,
-					default: '4',
-					required: true,
-				},
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'blindModeSelect',
+					default: 'toggle',
+					choices: [
+					  { id: 'enter', label: 'Enter Blind' },
+					  { id: 'exit', label: 'Exit Blind' },
+					  { id: 'toggle', label: 'Toggle Blind' },
+					  { id: 'cancel', label: 'Cancel Blind' }
+					],
+					minChoicesForSearch: 8
+				  }
 			],
 		},
 		custom: {
@@ -294,80 +138,91 @@ instance.prototype.actions = function (system) {
 instance.prototype.action = function (action) {
 	var self = this;
 
-	debug('action: ', action);
-
-	if (action.action == 'triggerClip') {
-		var bol = {
-			type: 'i',
-			value: parseInt(1),
-		};
-		debug(
-			'sending',
-			self.config.host,
-			self.config.port,
-			'/composition/layers/' + action.options.layer + '/clips/' + action.options.column + '/connect',
-			[bol]
-		);
-		self.oscSend(
-			self.config.host,
-			self.config.port,
-			'/composition/layers/' + action.options.layer + '/clips/' + action.options.column + '/connect',
-			[bol]
-		);
+	if (action.action == 'blindMode') {
+		switch(this.actions.options.choices.id) {
+			case "enter":
+				self.oscSend(
+					self.config.host,
+					self.config.port,
+					'/output/enterBlind/'
+				);
+				break;
+			case "exit":
+				self.oscSend(
+					self.config.host,
+					self.config.port,
+					'/output/exitBlind/'
+				);
+				break;
+			case "toggle":
+				self.oscSend(
+					self.config.host,
+					self.config.port,
+					'/output/toggleBlind/'
+				);
+				break;
+			case "cancel":
+				self.oscSend(
+					self.config.host,
+					self.config.port,
+					'/output/cancelBlind/'
+				);
+				break;
+		}
 	}
 
-	if (action.action == 'triggerColumn') {
-		var bol = {
-			type: 'i',
-			value: parseInt(1),
-		};
-		currentCompCol = action.options.column;
+	// if (action.action == 'triggerColumn') {
+	// 	var bol = {
+	// 		type: 'i',
+	// 		value: parseInt(1),
+	// 	};
+	// 	currentCompCol = action.options.column;
 
-		debug('sending', self.config.host, self.config.port, '/composition/columns/' + action.options.column + '/connect', [
-			bol,
-		]);
-		self.oscSend(self.config.host, self.config.port, '/composition/columns/' + action.options.column + '/connect', [
-			bol,
-		]);
-	}
+	// 	debug('sending', self.config.host, self.config.port, '/composition/columns/' + action.options.column + '/connect', [
+	// 		bol,
+	// 	]);
+	// 	self.oscSend(self.config.host, self.config.port, '/composition/columns/' + action.options.column + '/connect', [
+	// 		bol,
+	// 	]);
+	// }
 
-	if (action.action == 'clearLayer') {
-		var bol = {
-			type: 'i',
-			value: parseInt(1),
-		};
-		debug('sending', self.config.host, self.config.port, '/composition/layers/' + action.options.layer + '/clear', [
-			bol,
-		]);
-		self.oscSend(self.config.host, self.config.port, '/composition/layers/' + action.options.layer + '/clear', [bol]);
-		//sending second command with value 0 to reset the layer, else this command only works one time
-		var bol = {
-			type: 'i',
-			value: parseInt(0),
-		};
-		debug('sending', self.config.host, self.config.port, '/composition/layers/' + action.options.layer + '/clear', [
-			bol,
-		]);
-		self.oscSend(self.config.host, self.config.port, '/composition/layers/' + action.options.layer + '/clear', [bol]);
-	}
+	// if (action.action == 'clearLayer') {
+	// 	var bol = {
+	// 		type: 'i',
+	// 		value: parseInt(1),
+	// 	};
+	// 	debug('sending', self.config.host, self.config.port, '/composition/layers/' + action.options.layer + '/clear', [
+	// 		bol,
+	// 	]);
+	// 	self.oscSend(self.config.host, self.config.port, '/composition/layers/' + action.options.layer + '/clear', [bol]);
+	// 	//sending second command with value 0 to reset the layer, else this command only works one time
+	// 	var bol = {
+	// 		type: 'i',
+	// 		value: parseInt(0),
+	// 	};
+	// 	debug('sending', self.config.host, self.config.port, '/composition/layers/' + action.options.layer + '/clear', [
+	// 		bol,
+	// 	]);
+	// 	self.oscSend(self.config.host, self.config.port, '/composition/layers/' + action.options.layer + '/clear', [bol]);
+	// }
 
-	if (action.action == 'clearAll') {
-		var bol = {
-			type: 'i',
-			value: parseInt(1),
-		};
-		debug('sending', self.config.host, self.config.port, '/composition/disconnectall', [bol]);
-		self.oscSend(self.config.host, self.config.port, '/composition/disconnectall', [bol]);
-	}
+	// if (action.action == 'clearAll') {
+	// 	var bol = {
+	// 		type: 'i',
+	// 		value: parseInt(1),
+	// 	};
+	// 	debug('sending', self.config.host, self.config.port, '/composition/disconnectall', [bol]);
+	// 	self.oscSend(self.config.host, self.config.port, '/composition/disconnectall', [bol]);
+	// }
 
-	if (action.action == 'tempoTap') {
-		var bol = {
-			type: 'i',
-			value: parseInt(1),
-		};
-		debug('sending', self.config.host, self.config.port, '/composition/tempocontroller/tempotap', [bol]);
-		self.oscSend(self.config.host, self.config.port, '/composition/tempocontroller/tempotap', [bol]);
-	}
+	// if (action.action == 'tempoTap') {
+	// 	var bol = {
+	// 		type: 'i',
+	// 		value: parseInt(1),
+	// 	};
+	// 	debug('sending', self.config.host, self.config.port, '/composition/tempocontroller/tempotap', [bol]);
+	// 	self.oscSend(self.config.host, self.config.port, '/composition/tempocontroller/tempotap', [bol]);
+	// }
 
 	if (action.action == 'custom') {
 		var args = [];
@@ -396,155 +251,155 @@ instance.prototype.action = function (action) {
 		debug('sending', self.config.host, self.config.port, action.options.customPath);
 		self.oscSend(self.config.host, self.config.port, action.options.customPath, args);
 	}
-	if (action.action == 'grpNextCol') {
-		var bol = {
-			type: 'i',
-			value: '1',
-		};
-		if (groupPos[action.options.groupNext] == undefined) {
-			groupPos[action.options.groupNext] = 1;
-		} else {
-			groupPos[action.options.groupNext]++;
-		}
-		if (groupPos[action.options.groupNext] > action.options.colMaxGroupNext) {
-			groupPos[action.options.groupNext] = 1;
-		}
+	// if (action.action == 'grpNextCol') {
+	// 	var bol = {
+	// 		type: 'i',
+	// 		value: '1',
+	// 	};
+	// 	if (groupPos[action.options.groupNext] == undefined) {
+	// 		groupPos[action.options.groupNext] = 1;
+	// 	} else {
+	// 		groupPos[action.options.groupNext]++;
+	// 	}
+	// 	if (groupPos[action.options.groupNext] > action.options.colMaxGroupNext) {
+	// 		groupPos[action.options.groupNext] = 1;
+	// 	}
 
-		debug(
-			'sending',
-			self.config.host,
-			self.config.port,
-			'/composition/groups/' +
-				action.options.groupNext +
-				'//composition/columns/' +
-				groupPos[action.options.groupNext] +
-				'/connect'
-		);
-		self.oscSend(
-			self.config.host,
-			self.config.port,
-			'/composition/groups/' +
-				action.options.groupNext +
-				'//composition/columns/' +
-				groupPos[action.options.groupNext] +
-				'/connect',
-			[bol]
-		);
-	}
-	if (action.action == 'grpPrvCol') {
-		var bol = {
-			type: 'i',
-			value: '1',
-		};
+	// 	debug(
+	// 		'sending',
+	// 		self.config.host,
+	// 		self.config.port,
+	// 		'/composition/groups/' +
+	// 			action.options.groupNext +
+	// 			'//composition/columns/' +
+	// 			groupPos[action.options.groupNext] +
+	// 			'/connect'
+	// 	);
+	// 	self.oscSend(
+	// 		self.config.host,
+	// 		self.config.port,
+	// 		'/composition/groups/' +
+	// 			action.options.groupNext +
+	// 			'//composition/columns/' +
+	// 			groupPos[action.options.groupNext] +
+	// 			'/connect',
+	// 		[bol]
+	// 	);
+	// }
+	// if (action.action == 'grpPrvCol') {
+	// 	var bol = {
+	// 		type: 'i',
+	// 		value: '1',
+	// 	};
 
-		if (groupPos[action.options.groupPrev] == undefined) {
-			groupPos[action.options.groupPrev] = 1;
-		} else {
-			groupPos[action.options.groupPrev]--;
-		}
-		if (groupPos[action.options.groupPrev] < 1) {
-			groupPos[action.options.groupPrev] = action.options.colMaxGroupPrev;
-		}
+	// 	if (groupPos[action.options.groupPrev] == undefined) {
+	// 		groupPos[action.options.groupPrev] = 1;
+	// 	} else {
+	// 		groupPos[action.options.groupPrev]--;
+	// 	}
+	// 	if (groupPos[action.options.groupPrev] < 1) {
+	// 		groupPos[action.options.groupPrev] = action.options.colMaxGroupPrev;
+	// 	}
 
-		debug(
-			'sending',
-			self.config.host,
-			self.config.port,
-			'/composition/groups/' +
-				action.options.groupPrev +
-				'//composition/columns/' +
-				groupPos[action.options.groupPrev] +
-				'/connect'
-		);
-		self.oscSend(
-			self.config.host,
-			self.config.port,
-			'/composition/groups/' +
-				action.options.groupPrev +
-				'//composition/columns/' +
-				groupPos[action.options.groupPrev] +
-				'/connect',
-			[bol]
-		);
-	}
-	if (action.action == 'compNextCol') {
-		var bol = {
-			type: 'i',
-			value: '1',
-		};
-		currentCompCol++;
-		if (currentCompCol > action.options.colMaxCompNext) {
-			currentCompCol = 1;
-		}
+	// 	debug(
+	// 		'sending',
+	// 		self.config.host,
+	// 		self.config.port,
+	// 		'/composition/groups/' +
+	// 			action.options.groupPrev +
+	// 			'//composition/columns/' +
+	// 			groupPos[action.options.groupPrev] +
+	// 			'/connect'
+	// 	);
+	// 	self.oscSend(
+	// 		self.config.host,
+	// 		self.config.port,
+	// 		'/composition/groups/' +
+	// 			action.options.groupPrev +
+	// 			'//composition/columns/' +
+	// 			groupPos[action.options.groupPrev] +
+	// 			'/connect',
+	// 		[bol]
+	// 	);
+	// }
+	// if (action.action == 'compNextCol') {
+	// 	var bol = {
+	// 		type: 'i',
+	// 		value: '1',
+	// 	};
+	// 	currentCompCol++;
+	// 	if (currentCompCol > action.options.colMaxCompNext) {
+	// 		currentCompCol = 1;
+	// 	}
 
-		debug('sending', self.config.host, self.config.port, '/composition/columns/' + currentCompCol + '/connect');
-		self.oscSend(self.config.host, self.config.port, '/composition/columns/' + currentCompCol + '/connect', [bol]);
-	}
-	if (action.action == 'compPrvCol') {
-		var bol = {
-			type: 'i',
-			value: '1',
-		};
-		currentCompCol--;
-		if (currentCompCol < 1) {
-			currentCompCol = action.options.colMaxCompPrev;
-		}
+	// 	debug('sending', self.config.host, self.config.port, '/composition/columns/' + currentCompCol + '/connect');
+	// 	self.oscSend(self.config.host, self.config.port, '/composition/columns/' + currentCompCol + '/connect', [bol]);
+	// }
+	// if (action.action == 'compPrvCol') {
+	// 	var bol = {
+	// 		type: 'i',
+	// 		value: '1',
+	// 	};
+	// 	currentCompCol--;
+	// 	if (currentCompCol < 1) {
+	// 		currentCompCol = action.options.colMaxCompPrev;
+	// 	}
 
-		debug('sending', self.config.host, self.config.port, '/composition/columns/' + currentCompCol + '/connect');
-		self.oscSend(self.config.host, self.config.port, '/composition/columns/' + currentCompCol + '/connect', [bol]);
-	}
-	if (action.action == 'layNextCol') {
-		var bol = {
-			type: 'i',
-			value: '1',
-		};
-		if (layerPos[action.options.layerN] == undefined) {
-			layerPos[action.options.layerN] = 1;
-		} else {
-			layerPos[action.options.layerN]++;
-		}
-		if (layerPos[action.options.layerN] > action.options.colMaxLayerN) {
-			layerPos[action.options.layerN] = 1;
-		}
-		debug(
-			'sending',
-			self.config.host,
-			self.config.port,
-			'/composition/layers/' + action.options.layerN + '/clips/' + layerPos[action.options.layerN] + '/connect'
-		);
-		self.oscSend(
-			self.config.host,
-			self.config.port,
-			'/composition/layers/' + action.options.layerN + '/clips/' + layerPos[action.options.layerN] + '/connect',
-			[bol]
-		);
-	}
-	if (action.action == 'layPrvCol') {
-		var bol = {
-			type: 'i',
-			value: '1',
-		};
-		if (layerPos[action.options.layerP] == undefined) {
-			layerPos[action.options.layerP] = 1;
-		} else {
-			layerPos[action.options.layerP]--;
-		}
-		if (layerPos[action.options.layerP] < 1) {
-			layerPos[action.options.layerP] = action.options.colMaxLayerP;
-		}
-		debug(
-			'sending',
-			self.config.host,
-			self.config.port,
-			'/composition/layers/' + action.options.layerP + '/clips/' + layerPos[action.options.layerP] + '/connect'
-		);
-		self.oscSend(
-			self.config.host,
-			self.config.port,
-			'/composition/layers/' + action.options.layerP + '/clips/' + layerPos[action.options.layerP] + '/connect',
-			[bol]
-		);
-	}
+	// 	debug('sending', self.config.host, self.config.port, '/composition/columns/' + currentCompCol + '/connect');
+	// 	self.oscSend(self.config.host, self.config.port, '/composition/columns/' + currentCompCol + '/connect', [bol]);
+	// }
+	// if (action.action == 'layNextCol') {
+	// 	var bol = {
+	// 		type: 'i',
+	// 		value: '1',
+	// 	};
+	// 	if (layerPos[action.options.layerN] == undefined) {
+	// 		layerPos[action.options.layerN] = 1;
+	// 	} else {
+	// 		layerPos[action.options.layerN]++;
+	// 	}
+	// 	if (layerPos[action.options.layerN] > action.options.colMaxLayerN) {
+	// 		layerPos[action.options.layerN] = 1;
+	// 	}
+	// 	debug(
+	// 		'sending',
+	// 		self.config.host,
+	// 		self.config.port,
+	// 		'/composition/layers/' + action.options.layerN + '/clips/' + layerPos[action.options.layerN] + '/connect'
+	// 	);
+	// 	self.oscSend(
+	// 		self.config.host,
+	// 		self.config.port,
+	// 		'/composition/layers/' + action.options.layerN + '/clips/' + layerPos[action.options.layerN] + '/connect',
+	// 		[bol]
+	// 	);
+	// }
+	// if (action.action == 'layPrvCol') {
+	// 	var bol = {
+	// 		type: 'i',
+	// 		value: '1',
+	// 	};
+	// 	if (layerPos[action.options.layerP] == undefined) {
+	// 		layerPos[action.options.layerP] = 1;
+	// 	} else {
+	// 		layerPos[action.options.layerP]--;
+	// 	}
+	// 	if (layerPos[action.options.layerP] < 1) {
+	// 		layerPos[action.options.layerP] = action.options.colMaxLayerP;
+	// 	}
+	// 	debug(
+	// 		'sending',
+	// 		self.config.host,
+	// 		self.config.port,
+	// 		'/composition/layers/' + action.options.layerP + '/clips/' + layerPos[action.options.layerP] + '/connect'
+	// 	);
+	// 	self.oscSend(
+	// 		self.config.host,
+	// 		self.config.port,
+	// 		'/composition/layers/' + action.options.layerP + '/clips/' + layerPos[action.options.layerP] + '/connect',
+	// 		[bol]
+	// 	);
+	// }
 };
 
 instance_skel.extendedBy(instance);
