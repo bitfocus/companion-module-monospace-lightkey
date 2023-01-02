@@ -88,6 +88,299 @@ instance.prototype.destroy = function () {
 instance.prototype.actions = function (system) {
 	var self = this;
 	self.setActions({
+
+		/***** LIVE VIEW ACTIONS *****/
+		triggerCue: {
+			label: 'Trigger Cue',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'mode',
+					default: 'toggle',
+					choices: [
+						{ id: 'activate', label: 'Activate' },
+						{ id: 'deactivate', label: 'Deactivate' },
+						{ id: 'toggle', label: 'Toggle' },
+					],
+				},
+				{
+					type: 'dropdown',
+					label: 'Page Type',
+					id: 'pageType',
+					default: 'custom',
+					choices: [
+						{ id: 'selected', label: 'Currently Selected Page' },
+						{ id: 'all', label: 'All Pages' },
+						{ id: 'custom', label: 'Custom Page' },
+					],
+				},
+				{
+					type: 'textinput',
+					label: 'Page Name',
+					id: 'pageName',
+					tooltip: 'Find the page name by clicking on the Live dropdown menu in Lightkey',
+					isVisible: (action) => { action.options.pageType == "custom" },
+				},
+				{
+					type: 'textinput',
+					label: 'Cue Name',
+					id: 'cueName',
+					tooltip: 'Enter * for all cuelists'
+				},
+				{
+					type: 'textinput',
+					label: 'Fade Time',
+					id: 'fadeTime',
+				}
+			]
+		},
+		setCueIntensity: {
+			label: 'Set Cue Intensity',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Page Type',
+					id: 'pageType',
+					default: 'custom',
+					choices: [
+						{ id: 'selected', label: 'Currently Selected Page' },
+						{ id: 'all', label: 'All Pages' },
+						{ id: 'custom', label: 'Custom Page' },
+					],
+				},
+				{
+					type: 'textinput',
+					label: 'Page Name',
+					id: 'pageName',
+					tooltip: 'Find the page name by clicking on the Live dropdown menu in Lightkey',
+					isVisible: (action) => { action.options.pageType == "custom" },
+				},
+				{
+					type: 'textinput',
+					label: 'Cue Name',
+					id: 'cueName',
+					tooltip: 'Enter * for all cuelists'
+				},
+				{
+					type: 'number',
+					label: 'Intensity Level',
+					id: 'intensity',
+					tooltip: 'Enter value between 0 and 100',
+					min: 0,
+					max: 100,
+					default: "",
+				}
+			],
+		},
+		cuelistPlayback: {
+			label: 'Cuelist Playback',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'mode',
+					default: 'toggle',
+					choices: [
+						{ id: 'start', label: 'Start' },
+						{ id: 'stop', label: 'Stop' },
+						{ id: 'toggle', label: 'Toggle' },
+						{ id: 'pause', label: 'Pause' },
+						{ id: 'resume', label: 'Resume' },
+						{ id: 'togglePaused', label: 'Toggle Paused' },
+						{ id: 'nextCue', label: 'Next Cue' },
+						{ id: 'previousCue', label: 'Previous Cue' },
+					]
+				},
+				{
+					type: 'textinput',
+					label: 'Fade Time',
+					id: 'fadeTime',
+					isVisible: (action) => { action.options.mode == "nextCue" || action.options.mode == "previousCue" },
+				},
+			]
+		},
+		setXfade: {
+			label: 'Set Cuelist Xfade',
+			options: [
+				{
+					type: 'number',
+					label: 'Xfade level of current cuelist',
+					id: 'xfade',
+					min: 0,
+					max: 100,
+					default: 0,
+				}
+			]
+		},
+		skipCue: {
+			label: 'Skip Cue',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'mode',
+					choices: [
+						{ id: 'skip', label: 'Skip' },
+						{ id: 'unskip', label: 'Unskip' },
+					]
+				},
+				{
+					type: 'textinput',
+					label: 'Cuelist Name',
+					id: 'cuelistName',
+					tooltip: 'Find the cuelist name by clicking on the Live dropdown menu in Lightkey',
+				},
+				{
+					type: 'textinput',
+					label: 'Cue Name',
+					id: 'cueName',
+					tooltip: 'Enter * for all cues'
+				},
+			]
+		},
+
+		/***** PRESET PALETTE ACTIONS *****/
+		presetPalette: {
+			label: 'Preset Palette',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'mode',
+					default: 'toggle',
+					choices: [
+						{ id: 'activate', label: 'Activate' },
+						{ id: 'deactivate', label: 'Deactivate' },
+						{ id: 'toggle', label: 'Toggle' },
+					],
+				},
+				{
+					type: 'textinput',
+					label: "Path to Preset (e.g. Movers/Colors/Indigo)",
+					id: 'path',
+					tooltip: "Include all parent group names followed by preset name, each separated by slashes",
+				}
+			
+				
+				// The isVisible property doesn't seem to be working... the following doesn't make sense to use without that property working.
+
+				// {
+				// 	type: 'number',
+				// 	label: 'Number of groups',
+				// 	id: 'numOfGroups',
+				// 	default: "",
+				// 	min: 0,
+				// 	max: 5,
+				// },
+				// {
+				// 	type: 'textinput', 
+				// 	label: 'Group 1 Name',
+				// 	id: 'group1',
+				// 	isVisible: (action) => { action.options.numOfGroups >= 1 },
+				// },
+				// {
+				// 	type: 'textinput',
+				// 	label: 'Group 2 Name',
+				// 	id: 'group2',
+				// 	isVisible: (action) => { action.options.numOfGroups >= 2 },
+				// },
+				// {
+				// 	type: 'textinput', 
+				// 	label: 'Group 3 Name',
+				// 	id: 'group3',
+				// 	isVisible: (action) => { action.options.numOfGroups >= 3 },
+				// },
+				// {
+				// 	type: 'textinput', 
+				// 	label: 'Group 4 Name',
+				// 	id: 'group4',
+				// 	isVisible: (action) => { action.options.numOfGroups >= 4 },
+				// },
+				// {
+				// 	type: 'textinput', 
+				// 	label: 'Group 5 Name',
+				// 	id: 'group5',
+				// 	isVisible: (action) => { action.options.numOfGroups >= 5 },
+				// },
+				// {
+				// 	type: 'textinput', 
+				// 	label: 'Preset Name',
+				// 	id: 'preset',
+				// },
+			]
+		},
+
+		startSequence: {
+			label: 'Start/Stop Sequence',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'mode',
+					default: 'toggle',
+					choices: [
+						{ id: 'start', label: 'Start' },
+						{ id: 'stop', label: 'Stop' },
+						{ id: 'toggle', label: 'Toggle' },
+					],
+				},
+
+				// The isVisible property doesn't seem to be working... the following doesn't make sense to use without that property working.
+
+				// {
+				// 	type: 'number',
+				// 	label: 'Number of groups',
+				// 	id: 'numOfGroups',
+				// 	default: "",
+				// 	min: 0,
+				// 	max: 5,
+				// },
+				// {
+				// 	type: 'textinput', 
+				// 	label: 'Group 1 Name',
+				// 	id: 'group1',
+				// 	isVisible: (action) => { action.options.numOfGroups >= 1 },
+				// },
+				// {
+				// 	type: 'textinput',
+				// 	label: 'Group 2 Name',
+				// 	id: 'group2',
+				// 	isVisible: (action) => { action.options.numOfGroups >= 2 },
+				// },
+				// {
+				// 	type: 'textinput', 
+				// 	label: 'Group 3 Name',
+				// 	id: 'group3',
+				// 	isVisible: (action) => { action.options.numOfGroups >= 3 },
+				// },
+				// {
+				// 	type: 'textinput', 
+				// 	label: 'Group 4 Name',
+				// 	id: 'group4',
+				// 	isVisible: (action) => { action.options.numOfGroups >= 4 },
+				// },
+				// {
+				// 	type: 'textinput', 
+				// 	label: 'Group 5 Name',
+				// 	id: 'group5',
+				// 	isVisible: (action) => { action.options.numOfGroups >= 5 },
+				// },
+				// {
+				// 	type: 'textinput', 
+				// 	label: 'Preset Name',
+				// 	id: 'preset',
+				// },
+
+				{
+					type: 'textinput',
+					label: "Path to Sequence (e.g. Movers/Colors/Indigo)",
+					tooltip: "Include all parent group names followed by preset name, each separated by slashes",
+				}
+			]
+		},
+
+		/***** OUTPUT CONTROL ACTIONS *****/
 		blindMode: {
 			label: 'Blind Mode',
 			options: [
@@ -102,10 +395,107 @@ instance.prototype.actions = function (system) {
 					  { id: 'toggle', label: 'Toggle Blind' },
 					  { id: 'cancel', label: 'Cancel Blind' }
 					],
-					minChoicesForSearch: 8
 				  }
 			],
 		},
+		freezeOutput: {
+			label: 'Freeze Output',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'mode',
+					default: 'toggle',
+					choices: [
+					  { id: 'freeze', label: 'Freeze output' },
+					  { id: 'unfreeze', label: 'Unfreeze output' },
+					  { id: 'toggle', label: 'Toggle output' },
+					],
+				  }
+			],
+		},
+		masterDimmer: {
+			label: 'Master Dimmer Level',
+			options: [
+				{
+					type: 'textinput',
+					label: 'Master Dimmer Level',
+					id: 'level',
+					default: 'toggle',
+				}
+			],
+		},
+		beatControl: {
+			label: 'Beat Control',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'mode',
+					default: 'tempo',
+					choices: [
+					  { id: 'tap', label: 'Tap tempo' },
+					  { id: 'sync', label: 'Sync' },
+					  { id: 'syncDownbeat', label: 'Sync downbeat' },
+					  { id: 'halve', label: 'Halve tempo' },
+					  { id: 'double', label: 'Double tempo' },
+					  { id: 'setTempo', label: 'Set tempo' },
+					],
+				},
+				{
+					type: 'textinput',
+					label: 'BPM',
+					id: 'bpm',
+					isVisible: (action) => { action.options.mode == "setTempo" },
+				},
+			]
+		},
+		
+		/***** FIXTURE PROPERTY ACTIONS *****/
+		fixtureProps: {
+			label: 'Fixture Properties',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Property name',
+					id: 'property',
+					choices: [
+						{ id: 'on', label: 'On or Off' },
+						{ id: 'dimmer', label: 'Dimmer' },
+						{ id: 'colorWheel', label: 'Color Wheel' },
+						{ id: 'colorRGB', label: 'Color RGB' },
+						{ id: 'colorTemperature', label: 'Color Temperature' },
+						{ id: 'panAngle', label: 'Pan Angle' },
+						{ id: 'tiltAngle', label: 'Tilt Angle' },
+						{ id: 'gobo', label: 'Gobo' },
+						{ id: 'goboRotationMode', label: 'Gobo Rotation Mode' },
+						{ id: 'goboShakeMode', label: 'Gobo Shake Mode' },
+						{ id: 'goboRotationSpeed', label: 'Gobo Rotation Speed' },
+						{ id: 'goboAngle', label: 'Gobo Angle' },
+						{ id: 'goboShakeSpeed', label: 'Gobo Shake Speed' },
+						{ id: 'goboCycleSpeed', label: 'Gobo Cycle Speed' },
+						{ id: 'shutterState', label: 'Shutter State' },
+						{ id: 'strobeSpeed', label: 'Strobe Speed' },
+						{ id: 'shutterPulseSpeed', label: 'Shutter Pulse Speed' },
+						{ id: 'prismType', label: 'Prism Type' },
+						{ id: 'prismRotationMode', label: 'Prism Rotation Mode' },
+						{ id: 'prismRotationSpeed', label: 'Prism Rotation Speed' },
+						{ id: 'PrismAngle', label: 'Prism Angle' },
+						{ id: 'focus', label: 'Focus' },
+						{ id: 'zoomAngle', label: 'Zoom Angle' },
+						{ id: 'irisSize', label: 'Iris Size' },
+					],
+					minChoicesForSearch: 0,
+				},
+				{
+					type: 'textinput',
+					label: 'Value (comma separated for properties with multiple values)',
+					id: 'value',
+					tooltip: 'See OSC section in Lightkey manual for details on specific properties'
+				}
+			]
+		},
+
 		custom: {
 			label: 'Custom OSC Command',
 			options: [
@@ -137,7 +527,145 @@ instance.prototype.actions = function (system) {
 
 instance.prototype.action = function (action) {
 	var self = this;
+	
+	/***** LIVE VIEW ACTIONS *****/
+	if (action.action == 'triggerCue') {
+		let args = [];
+		args = [
+			{
+				type: 'f',
+				value: parseInt(action.options.fadeTime),
+			},
+		];
+		let pageName;
 
+		if(action.options.pageType == "selected") {
+			pageName = "selected";
+		} else if(action.options.pageType == "all") {
+			pageName = "*";
+		} else {
+			pageName = action.options.pageName.replace(" ", "_");
+		}
+
+		let cueName = action.options.cueName.replace(" ", "_");
+
+		console.log('/live/' + pageName + "/cue/" + cueName + "/" + action.options.mode);
+
+		self.oscSend(
+			self.config.host,
+			self.config.port,
+			'/live/' + pageName + "/cue/" + cueName + "/" + action.options.mode, 
+			args
+		);
+	}
+
+	if (action.action == 'setCueIntensity') {
+		let args = [];
+		args = [
+			{
+				type: 'f',
+				value: action.options.intensity/100,
+			},
+		];
+		let pageName;
+
+		if(action.options.pageType == "selected") {
+			pageName = "selected";
+		} else if(action.options.pageType == "all") {
+			pageName = "*";
+		} else {
+			pageName = action.options.pageName.replace(" ", "_");
+		}
+
+		let cueName = action.options.cueName.replace(" ", "_");
+
+		console.log('/live/' + pageName + "/cue/" + cueName + "/intensity " + action.options.intensity/100);
+
+		self.oscSend(
+			self.config.host,
+			self.config.port,
+			'/live/' + pageName + "/cue/" + cueName + "/intensity", 
+			args
+		);
+	}
+
+	if (action.action == 'cuelistPlayback') {
+		
+		if(action.options.mode == 'nextCue' || action.options.mode == 'previousCue') {
+			let args = [];
+			args = [
+				{
+					type: 'i',
+					value: parseInt(action.options.fadeTime),
+				},
+			];
+
+
+			self.oscSend(
+				self.config.host,
+				self.config.port,
+				'/live/' + action.options.mode, 
+				args
+			);
+		} else {
+			self.oscSend(
+				self.config.host,
+				self.config.port,
+				'/live/' + action.options.mode
+			);
+		}
+
+		console.log('/live/' + action.options.mode);
+	}
+
+	if (action.action == 'setXfade') {
+		let args = [];
+			args = [
+				{
+					type: 'f',
+					value: action.options.xfade/100,
+				},
+			];
+
+			console.log('/live/xfade ' + action.options.xfade/100)
+
+		self.oscSend(
+			self.config.host,
+			self.config.port,
+			'/live/xfade', 
+			args
+		);
+	}
+
+	if (action.action == 'skipCue') {
+
+		let cuelistName = action.options.cuelistName.replace(/\s/g, "_");
+		let cueName = action.options.cueName.replace(/\s/g, "_");
+
+		console.log('/live/' + cuelistName + "/cue/" + cueName + "/" + action.options.mode);
+
+		self.oscSend(
+			self.config.host,
+			self.config.port,
+			'/live/' + cuelistName + "/cue/" + cueName + "/" + action.options.mode
+		);
+	}
+	
+	/***** PRESET PALETTE ACTIONS *****/
+	if(action.action == "presetPalette") {
+
+		let presetPath = action.options.path.replace(/\s/g, "_");
+
+		console.log('/palette/' + presetPath + "/" + action.options.mode);
+
+		self.oscSend(
+			self.config.host,
+			self.config.port,
+			'/palette/' + presetPath + "/" + action.options.mode
+		);
+	}
+
+	/***** OUTPUT CONTROL ACTIONS *****/
 	if (action.action == 'blindMode') {
 		if(action.options.mode == "enter") {
 			console.log("Sending enter");
@@ -173,60 +701,7 @@ instance.prototype.action = function (action) {
 		}
 	}
 
-
-	// if (action.action == 'triggerColumn') {
-	// 	var bol = {
-	// 		type: 'i',
-	// 		value: parseInt(1),
-	// 	};
-	// 	currentCompCol = action.options.column;
-
-	// 	debug('sending', self.config.host, self.config.port, '/composition/columns/' + action.options.column + '/connect', [
-	// 		bol,
-	// 	]);
-	// 	self.oscSend(self.config.host, self.config.port, '/composition/columns/' + action.options.column + '/connect', [
-	// 		bol,
-	// 	]);
-	// }
-
-	// if (action.action == 'clearLayer') {
-	// 	var bol = {
-	// 		type: 'i',
-	// 		value: parseInt(1),
-	// 	};
-	// 	debug('sending', self.config.host, self.config.port, '/composition/layers/' + action.options.layer + '/clear', [
-	// 		bol,
-	// 	]);
-	// 	self.oscSend(self.config.host, self.config.port, '/composition/layers/' + action.options.layer + '/clear', [bol]);
-	// 	//sending second command with value 0 to reset the layer, else this command only works one time
-	// 	var bol = {
-	// 		type: 'i',
-	// 		value: parseInt(0),
-	// 	};
-	// 	debug('sending', self.config.host, self.config.port, '/composition/layers/' + action.options.layer + '/clear', [
-	// 		bol,
-	// 	]);
-	// 	self.oscSend(self.config.host, self.config.port, '/composition/layers/' + action.options.layer + '/clear', [bol]);
-	// }
-
-	// if (action.action == 'clearAll') {
-	// 	var bol = {
-	// 		type: 'i',
-	// 		value: parseInt(1),
-	// 	};
-	// 	debug('sending', self.config.host, self.config.port, '/composition/disconnectall', [bol]);
-	// 	self.oscSend(self.config.host, self.config.port, '/composition/disconnectall', [bol]);
-	// }
-
-	// if (action.action == 'tempoTap') {
-	// 	var bol = {
-	// 		type: 'i',
-	// 		value: parseInt(1),
-	// 	};
-	// 	debug('sending', self.config.host, self.config.port, '/composition/tempocontroller/tempotap', [bol]);
-	// 	self.oscSend(self.config.host, self.config.port, '/composition/tempocontroller/tempotap', [bol]);
-	// }
-
+	/***** FIXTURE PROPERTY ACTIONS *****/
 	if (action.action == 'custom') {
 		var args = [];
 		if (action.options.oscType == 'i') {
@@ -254,155 +729,6 @@ instance.prototype.action = function (action) {
 		debug('sending', self.config.host, self.config.port, action.options.customPath);
 		self.oscSend(self.config.host, self.config.port, action.options.customPath, args);
 	}
-	// if (action.action == 'grpNextCol') {
-	// 	var bol = {
-	// 		type: 'i',
-	// 		value: '1',
-	// 	};
-	// 	if (groupPos[action.options.groupNext] == undefined) {
-	// 		groupPos[action.options.groupNext] = 1;
-	// 	} else {
-	// 		groupPos[action.options.groupNext]++;
-	// 	}
-	// 	if (groupPos[action.options.groupNext] > action.options.colMaxGroupNext) {
-	// 		groupPos[action.options.groupNext] = 1;
-	// 	}
-
-	// 	debug(
-	// 		'sending',
-	// 		self.config.host,
-	// 		self.config.port,
-	// 		'/composition/groups/' +
-	// 			action.options.groupNext +
-	// 			'//composition/columns/' +
-	// 			groupPos[action.options.groupNext] +
-	// 			'/connect'
-	// 	);
-	// 	self.oscSend(
-	// 		self.config.host,
-	// 		self.config.port,
-	// 		'/composition/groups/' +
-	// 			action.options.groupNext +
-	// 			'//composition/columns/' +
-	// 			groupPos[action.options.groupNext] +
-	// 			'/connect',
-	// 		[bol]
-	// 	);
-	// }
-	// if (action.action == 'grpPrvCol') {
-	// 	var bol = {
-	// 		type: 'i',
-	// 		value: '1',
-	// 	};
-
-	// 	if (groupPos[action.options.groupPrev] == undefined) {
-	// 		groupPos[action.options.groupPrev] = 1;
-	// 	} else {
-	// 		groupPos[action.options.groupPrev]--;
-	// 	}
-	// 	if (groupPos[action.options.groupPrev] < 1) {
-	// 		groupPos[action.options.groupPrev] = action.options.colMaxGroupPrev;
-	// 	}
-
-	// 	debug(
-	// 		'sending',
-	// 		self.config.host,
-	// 		self.config.port,
-	// 		'/composition/groups/' +
-	// 			action.options.groupPrev +
-	// 			'//composition/columns/' +
-	// 			groupPos[action.options.groupPrev] +
-	// 			'/connect'
-	// 	);
-	// 	self.oscSend(
-	// 		self.config.host,
-	// 		self.config.port,
-	// 		'/composition/groups/' +
-	// 			action.options.groupPrev +
-	// 			'//composition/columns/' +
-	// 			groupPos[action.options.groupPrev] +
-	// 			'/connect',
-	// 		[bol]
-	// 	);
-	// }
-	// if (action.action == 'compNextCol') {
-	// 	var bol = {
-	// 		type: 'i',
-	// 		value: '1',
-	// 	};
-	// 	currentCompCol++;
-	// 	if (currentCompCol > action.options.colMaxCompNext) {
-	// 		currentCompCol = 1;
-	// 	}
-
-	// 	debug('sending', self.config.host, self.config.port, '/composition/columns/' + currentCompCol + '/connect');
-	// 	self.oscSend(self.config.host, self.config.port, '/composition/columns/' + currentCompCol + '/connect', [bol]);
-	// }
-	// if (action.action == 'compPrvCol') {
-	// 	var bol = {
-	// 		type: 'i',
-	// 		value: '1',
-	// 	};
-	// 	currentCompCol--;
-	// 	if (currentCompCol < 1) {
-	// 		currentCompCol = action.options.colMaxCompPrev;
-	// 	}
-
-	// 	debug('sending', self.config.host, self.config.port, '/composition/columns/' + currentCompCol + '/connect');
-	// 	self.oscSend(self.config.host, self.config.port, '/composition/columns/' + currentCompCol + '/connect', [bol]);
-	// }
-	// if (action.action == 'layNextCol') {
-	// 	var bol = {
-	// 		type: 'i',
-	// 		value: '1',
-	// 	};
-	// 	if (layerPos[action.options.layerN] == undefined) {
-	// 		layerPos[action.options.layerN] = 1;
-	// 	} else {
-	// 		layerPos[action.options.layerN]++;
-	// 	}
-	// 	if (layerPos[action.options.layerN] > action.options.colMaxLayerN) {
-	// 		layerPos[action.options.layerN] = 1;
-	// 	}
-	// 	debug(
-	// 		'sending',
-	// 		self.config.host,
-	// 		self.config.port,
-	// 		'/composition/layers/' + action.options.layerN + '/clips/' + layerPos[action.options.layerN] + '/connect'
-	// 	);
-	// 	self.oscSend(
-	// 		self.config.host,
-	// 		self.config.port,
-	// 		'/composition/layers/' + action.options.layerN + '/clips/' + layerPos[action.options.layerN] + '/connect',
-	// 		[bol]
-	// 	);
-	// }
-	// if (action.action == 'layPrvCol') {
-	// 	var bol = {
-	// 		type: 'i',
-	// 		value: '1',
-	// 	};
-	// 	if (layerPos[action.options.layerP] == undefined) {
-	// 		layerPos[action.options.layerP] = 1;
-	// 	} else {
-	// 		layerPos[action.options.layerP]--;
-	// 	}
-	// 	if (layerPos[action.options.layerP] < 1) {
-	// 		layerPos[action.options.layerP] = action.options.colMaxLayerP;
-	// 	}
-	// 	debug(
-	// 		'sending',
-	// 		self.config.host,
-	// 		self.config.port,
-	// 		'/composition/layers/' + action.options.layerP + '/clips/' + layerPos[action.options.layerP] + '/connect'
-	// 	);
-	// 	self.oscSend(
-	// 		self.config.host,
-	// 		self.config.port,
-	// 		'/composition/layers/' + action.options.layerP + '/clips/' + layerPos[action.options.layerP] + '/connect',
-	// 		[bol]
-	// 	);
-	// }
 };
 
 instance_skel.extendedBy(instance);
