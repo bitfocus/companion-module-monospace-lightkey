@@ -94,7 +94,7 @@ instance.prototype.actions = function (system) {
 				{
 					type: 'dropdown',
 					label: 'Mode',
-					id: 'blindModeSelect',
+					id: 'mode',
 					default: 'toggle',
 					choices: [
 					  { id: 'enter', label: 'Enter Blind' },
@@ -139,37 +139,40 @@ instance.prototype.action = function (action) {
 	var self = this;
 
 	if (action.action == 'blindMode') {
-		switch(this.actions.options.choices.id) {
-			case "enter":
-				self.oscSend(
-					self.config.host,
-					self.config.port,
-					'/output/enterBlind/'
-				);
-				break;
-			case "exit":
-				self.oscSend(
-					self.config.host,
-					self.config.port,
-					'/output/exitBlind/'
-				);
-				break;
-			case "toggle":
-				self.oscSend(
-					self.config.host,
-					self.config.port,
-					'/output/toggleBlind/'
-				);
-				break;
-			case "cancel":
-				self.oscSend(
-					self.config.host,
-					self.config.port,
-					'/output/cancelBlind/'
-				);
-				break;
+		if(action.options.mode == "enter") {
+			console.log("Sending enter");
+			self.oscSend(
+				self.config.host,
+				self.config.port,
+				'/output/enterBlind/'
+			);
+		}
+		if(action.options.mode == "exit") {
+			console.log("Sending exit");
+			self.oscSend(
+				self.config.host,
+				self.config.port,
+				'/output/exitBlind/'
+			);
+		}
+		if(action.options.mode == "toggle") {
+			console.log("Sending toggle");
+			self.oscSend(
+				self.config.host,
+				self.config.port,
+				'/output/toggleBlind/'
+			);
+		}
+		if(action.options.mode == "cancel") {
+			console.log("Sending cancel");
+			self.oscSend(
+				self.config.host,
+				self.config.port,
+				'/output/cancelBlind/'
+			);
 		}
 	}
+
 
 	// if (action.action == 'triggerColumn') {
 	// 	var bol = {
