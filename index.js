@@ -238,7 +238,7 @@ instance.prototype.actions = function (system) {
 					tooltip: 'See Lightkey OSC documentation for more details on how to specify a preset path',
 				},
 
-				// The isVisible property doesn't seem to be working... the following doesn't make sense to use without that property working.
+				// The isVisible property doesn't seem to be working... the following doesn't make sense to use without that property.
 
 				// {
 				// 	type: 'number',
@@ -307,7 +307,7 @@ instance.prototype.actions = function (system) {
 					tooltip: 'See Lightkey OSC documentation for more details on how to specify a preset path',
 				},
 
-				// The isVisible property doesn't seem to be working... the following doesn't make sense to use without that property working.
+				// The isVisible property doesn't seem to be working... the following doesn't make sense to use without that property.
 
 				// {
 				// 	type: 'number',
