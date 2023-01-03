@@ -1,9 +1,6 @@
 var instance_skel = require('../../instance_skel');
 var debug;
 var log;
-var groupPos = [];
-var currentCompCol = 0;
-var layerPos = [];
 
 function instance(system, id, config) {
 	var self = this;
@@ -15,32 +12,6 @@ function instance(system, id, config) {
 
 	return self;
 }
-
-instance.GetUpgradeScripts = function () {
-	return [
-		function (context, config, actions, feedbacks) {
-			let changed = false;
-
-			let checkUpgrade = (action, changed) => {
-				if (action.action == 'custom') {
-					if (action.options.customCmd !== undefined) {
-						action.options.customPath = action.options.customCmd;
-						delete action.options.customCmd;
-						changed = true;
-					}
-				}
-
-				return changed;
-			};
-
-			for (let k in actions) {
-				changed = checkUpgrade(actions[k], changed);
-			}
-
-			return changed;
-		},
-	];
-};
 
 instance.prototype.updateConfig = function (config) {
 	var self = this;
@@ -515,24 +486,82 @@ instance.prototype.actions = function (system) {
 			options: [
 				{
 					type: 'textinput',
-					label: 'Custom OSC Path',
+					label: 'OSC Path',
 					id: 'customPath',
 				},
 				{
+					type: 'number',
+					label: 'Number of Additional Values',
+					id: 'numOfValeus',
+					default: 0,
+					min: 0,
+					max: 3,
+				},
+				{
 					type: 'dropdown',
-					label: 'OSC Type Flag',
-					id: 'oscType',
+					label: 'Value 1 Type',
+					id: 'oscType1',
 					tooltip: 'select the type of the value data',
 					choices: [
 						{ id: 'i', label: 'integer' },
 						{ id: 'f', label: 'float' },
 						{ id: 's', label: 'string' },
 					],
+					isVisible: (action) => {
+						action.options.numOfValeus >= 1;
+					},
 				},
 				{
 					type: 'textinput',
-					label: 'Value',
-					id: 'customValue',
+					label: 'Value 1',
+					id: 'customValue1',
+					isVisible: (action) => {
+						action.options.numOfValeus >= 1;
+					},
+				},
+				{
+					type: 'dropdown',
+					label: 'Value 2 Type',
+					id: 'oscType2',
+					tooltip: 'select the type of the value data',
+					choices: [
+						{ id: 'i', label: 'integer' },
+						{ id: 'f', label: 'float' },
+						{ id: 's', label: 'string' },
+					],
+					isVisible: (action) => {
+						action.options.numOfValeus >= 2;
+					},
+				},
+				{
+					type: 'textinput',
+					label: 'Value 2',
+					id: 'customValue2',
+					isVisible: (action) => {
+						action.options.numOfValeus >= 2;
+					},
+				},
+				{
+					type: 'dropdown',
+					label: 'Value 3 Type',
+					id: 'oscType3',
+					tooltip: 'select the type of the value data',
+					choices: [
+						{ id: 'i', label: 'integer' },
+						{ id: 'f', label: 'float' },
+						{ id: 's', label: 'string' },
+					],
+					isVisible: (action) => {
+						action.options.numOfValeus >= 3;
+					},
+				},
+				{
+					type: 'textinput',
+					label: 'Value 3',
+					id: 'customValue3',
+					isVisible: (action) => {
+						action.options.numOfValeus >= 3;
+					},
 				},
 			],
 		},
@@ -704,29 +733,65 @@ instance.prototype.action = function (action) {
 
 	/***** FIXTURE PROPERTY ACTIONS *****/
 	if (action.action == 'custom') {
-		var args = [];
-		if (action.options.oscType == 'i') {
-			args = [
-				{
+		let args = [];
+
+		if (action.options.numOfValeus >= 1) {
+			if (action.options.oscType1 == 'i') {
+				args.push({
 					type: 'i',
-					value: parseInt(action.options.customValue),
-				},
-			];
-		} else if (action.options.oscType == 'f') {
-			args = [
-				{
+					value: parseInt(action.options.customValue1),
+				});
+			} else if (action.options.oscType1 == 'f') {
+				args.push({
 					type: 'f',
-					value: parseFloat(action.options.customValue),
-				},
-			];
-		} else if (action.options.oscType == 's') {
-			args = [
-				{
+					value: parseFloat(action.options.customValue1),
+				});
+			} else if (action.options.oscType1 == 's') {
+				args.push({
 					type: 's',
-					value: '' + action.options.customValue,
-				},
-			];
+					value: '' + action.options.customValue1,
+				});
+			}
 		}
+
+		if (action.options.numOfValeus >= 2) {
+			if (action.options.oscType2 == 'i') {
+				args.push({
+					type: 'i',
+					value: parseInt(action.options.customValue2),
+				});
+			} else if (action.options.oscType2 == 'f') {
+				args.push({
+					type: 'f',
+					value: parseFloat(action.options.customValue2),
+				});
+			} else if (action.options.oscType2 == 's') {
+				args.push({
+					type: 's',
+					value: '' + action.options.customValue2,
+				});
+			}
+		}
+
+		if (action.options.numOfValeus >= 3) {
+			if (action.options.oscType3 == 'i') {
+				args.push({
+					type: 'i',
+					value: parseInt(action.options.customValue3),
+				});
+			} else if (action.options.oscType3 == 'f') {
+				args.push({
+					type: 'f',
+					value: parseFloat(action.options.customValue3),
+				});
+			} else if (action.options.oscType3 == 's') {
+				args.push({
+					type: 's',
+					value: '' + action.options.customValue3,
+				});
+			}
+		}
+
 		debug('sending', self.config.host, self.config.port, action.options.customPath);
 		self.oscSend(self.config.host, self.config.port, action.options.customPath, args);
 	}
