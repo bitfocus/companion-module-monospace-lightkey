@@ -88,7 +88,6 @@ instance.prototype.destroy = function () {
 instance.prototype.actions = function (system) {
 	var self = this;
 	self.setActions({
-
 		/***** LIVE VIEW ACTIONS *****/
 		triggerCue: {
 			label: 'Trigger Cue',
@@ -120,20 +119,22 @@ instance.prototype.actions = function (system) {
 					label: 'Page Name',
 					id: 'pageName',
 					tooltip: 'Find the page name by clicking on the Live dropdown menu in Lightkey',
-					isVisible: (action) => { action.options.pageType == "custom" },
+					isVisible: (action) => {
+						action.options.pageType == 'custom';
+					},
 				},
 				{
 					type: 'textinput',
 					label: 'Cue Name',
 					id: 'cueName',
-					tooltip: 'Enter * for all cuelists'
+					tooltip: 'Enter * for all cuelists',
 				},
 				{
 					type: 'textinput',
 					label: 'Fade Time',
 					id: 'fadeTime',
-				}
-			]
+				},
+			],
 		},
 		setCueIntensity: {
 			label: 'Set Cue Intensity',
@@ -154,13 +155,15 @@ instance.prototype.actions = function (system) {
 					label: 'Page Name',
 					id: 'pageName',
 					tooltip: 'Find the page name by clicking on the Live dropdown menu in Lightkey',
-					isVisible: (action) => { action.options.pageType == "custom" },
+					isVisible: (action) => {
+						action.options.pageType == 'custom';
+					},
 				},
 				{
 					type: 'textinput',
 					label: 'Cue Name',
 					id: 'cueName',
-					tooltip: 'Enter * for all cuelists'
+					tooltip: 'Enter * for all cuelists',
 				},
 				{
 					type: 'number',
@@ -169,8 +172,8 @@ instance.prototype.actions = function (system) {
 					tooltip: 'Enter value between 0 and 100',
 					min: 0,
 					max: 100,
-					default: "",
-				}
+					default: '',
+				},
 			],
 		},
 		cuelistPlayback: {
@@ -190,15 +193,17 @@ instance.prototype.actions = function (system) {
 						{ id: 'togglePaused', label: 'Toggle Paused' },
 						{ id: 'nextCue', label: 'Next Cue' },
 						{ id: 'previousCue', label: 'Previous Cue' },
-					]
+					],
 				},
 				{
 					type: 'textinput',
 					label: 'Fade Time',
 					id: 'fadeTime',
-					isVisible: (action) => { action.options.mode == "nextCue" || action.options.mode == "previousCue" },
+					isVisible: (action) => {
+						action.options.mode == 'nextCue' || action.options.mode == 'previousCue';
+					},
 				},
-			]
+			],
 		},
 		setXfade: {
 			label: 'Set Cuelist Xfade',
@@ -210,8 +215,8 @@ instance.prototype.actions = function (system) {
 					min: 0,
 					max: 100,
 					default: 0,
-				}
-			]
+				},
+			],
 		},
 		skipCue: {
 			label: 'Skip Cue',
@@ -223,7 +228,7 @@ instance.prototype.actions = function (system) {
 					choices: [
 						{ id: 'skip', label: 'Skip' },
 						{ id: 'unskip', label: 'Unskip' },
-					]
+					],
 				},
 				{
 					type: 'textinput',
@@ -235,9 +240,9 @@ instance.prototype.actions = function (system) {
 					type: 'textinput',
 					label: 'Cue Name',
 					id: 'cueName',
-					tooltip: 'Enter * for all cues'
+					tooltip: 'Enter * for all cues',
 				},
-			]
+			],
 		},
 
 		/***** PRESET PALETTE ACTIONS *****/
@@ -257,12 +262,11 @@ instance.prototype.actions = function (system) {
 				},
 				{
 					type: 'textinput',
-					label: "Path to Preset (e.g. Movers/Colors/Indigo)",
+					label: 'Path to Preset (e.g. Movers/Colors/Indigo)',
 					id: 'path',
-					tooltip: "Include all parent group names followed by preset name, each separated by slashes",
-				}
-			
-				
+					tooltip: 'See Lightkey OSC documentation for more details on how to specify a preset path',
+				},
+
 				// The isVisible property doesn't seem to be working... the following doesn't make sense to use without that property working.
 
 				// {
@@ -274,7 +278,7 @@ instance.prototype.actions = function (system) {
 				// 	max: 5,
 				// },
 				// {
-				// 	type: 'textinput', 
+				// 	type: 'textinput',
 				// 	label: 'Group 1 Name',
 				// 	id: 'group1',
 				// 	isVisible: (action) => { action.options.numOfGroups >= 1 },
@@ -286,29 +290,29 @@ instance.prototype.actions = function (system) {
 				// 	isVisible: (action) => { action.options.numOfGroups >= 2 },
 				// },
 				// {
-				// 	type: 'textinput', 
+				// 	type: 'textinput',
 				// 	label: 'Group 3 Name',
 				// 	id: 'group3',
 				// 	isVisible: (action) => { action.options.numOfGroups >= 3 },
 				// },
 				// {
-				// 	type: 'textinput', 
+				// 	type: 'textinput',
 				// 	label: 'Group 4 Name',
 				// 	id: 'group4',
 				// 	isVisible: (action) => { action.options.numOfGroups >= 4 },
 				// },
 				// {
-				// 	type: 'textinput', 
+				// 	type: 'textinput',
 				// 	label: 'Group 5 Name',
 				// 	id: 'group5',
 				// 	isVisible: (action) => { action.options.numOfGroups >= 5 },
 				// },
 				// {
-				// 	type: 'textinput', 
+				// 	type: 'textinput',
 				// 	label: 'Preset Name',
 				// 	id: 'preset',
 				// },
-			]
+			],
 		},
 
 		startSequence: {
@@ -325,6 +329,12 @@ instance.prototype.actions = function (system) {
 						{ id: 'toggle', label: 'Toggle' },
 					],
 				},
+				{
+					type: 'textinput',
+					label: 'Path to Sequence (e.g. Movers/Colors/Indigo)',
+					id: 'path',
+					tooltip: 'See Lightkey OSC documentation for more details on how to specify a preset path',
+				},
 
 				// The isVisible property doesn't seem to be working... the following doesn't make sense to use without that property working.
 
@@ -337,7 +347,7 @@ instance.prototype.actions = function (system) {
 				// 	max: 5,
 				// },
 				// {
-				// 	type: 'textinput', 
+				// 	type: 'textinput',
 				// 	label: 'Group 1 Name',
 				// 	id: 'group1',
 				// 	isVisible: (action) => { action.options.numOfGroups >= 1 },
@@ -349,35 +359,29 @@ instance.prototype.actions = function (system) {
 				// 	isVisible: (action) => { action.options.numOfGroups >= 2 },
 				// },
 				// {
-				// 	type: 'textinput', 
+				// 	type: 'textinput',
 				// 	label: 'Group 3 Name',
 				// 	id: 'group3',
 				// 	isVisible: (action) => { action.options.numOfGroups >= 3 },
 				// },
 				// {
-				// 	type: 'textinput', 
+				// 	type: 'textinput',
 				// 	label: 'Group 4 Name',
 				// 	id: 'group4',
 				// 	isVisible: (action) => { action.options.numOfGroups >= 4 },
 				// },
 				// {
-				// 	type: 'textinput', 
+				// 	type: 'textinput',
 				// 	label: 'Group 5 Name',
 				// 	id: 'group5',
 				// 	isVisible: (action) => { action.options.numOfGroups >= 5 },
 				// },
 				// {
-				// 	type: 'textinput', 
+				// 	type: 'textinput',
 				// 	label: 'Preset Name',
 				// 	id: 'preset',
 				// },
-
-				{
-					type: 'textinput',
-					label: "Path to Sequence (e.g. Movers/Colors/Indigo)",
-					tooltip: "Include all parent group names followed by preset name, each separated by slashes",
-				}
-			]
+			],
 		},
 
 		/***** OUTPUT CONTROL ACTIONS *****/
@@ -390,14 +394,15 @@ instance.prototype.actions = function (system) {
 					id: 'mode',
 					default: 'toggle',
 					choices: [
-					  { id: 'enter', label: 'Enter Blind' },
-					  { id: 'exit', label: 'Exit Blind' },
-					  { id: 'toggle', label: 'Toggle Blind' },
-					  { id: 'cancel', label: 'Cancel Blind' }
+						{ id: 'enterBlind', label: 'Enter Blind' },
+						{ id: 'exitBlind', label: 'Exit Blind' },
+						{ id: 'toggleBlind', label: 'Toggle Blind' },
+						{ id: 'cancelBlind', label: 'Cancel Blind' },
 					],
-				  }
+				},
 			],
 		},
+
 		freezeOutput: {
 			label: 'Freeze Output',
 			options: [
@@ -407,24 +412,28 @@ instance.prototype.actions = function (system) {
 					id: 'mode',
 					default: 'toggle',
 					choices: [
-					  { id: 'freeze', label: 'Freeze output' },
-					  { id: 'unfreeze', label: 'Unfreeze output' },
-					  { id: 'toggle', label: 'Toggle output' },
+						{ id: 'freeze', label: 'Freeze output' },
+						{ id: 'unfreeze', label: 'Unfreeze output' },
+						{ id: 'toggleFreeze', label: 'Toggle output' },
 					],
-				  }
+				},
 			],
 		},
+
 		masterDimmer: {
 			label: 'Master Dimmer Level',
 			options: [
 				{
-					type: 'textinput',
+					type: 'number',
 					label: 'Master Dimmer Level',
 					id: 'level',
-					default: 'toggle',
-				}
+					min: 0,
+					max: 100,
+					default: 100,
+				},
 			],
 		},
+
 		beatControl: {
 			label: 'Beat Control',
 			options: [
@@ -434,67 +443,72 @@ instance.prototype.actions = function (system) {
 					id: 'mode',
 					default: 'tempo',
 					choices: [
-					  { id: 'tap', label: 'Tap tempo' },
-					  { id: 'sync', label: 'Sync' },
-					  { id: 'syncDownbeat', label: 'Sync downbeat' },
-					  { id: 'halve', label: 'Halve tempo' },
-					  { id: 'double', label: 'Double tempo' },
-					  { id: 'setTempo', label: 'Set tempo' },
+						{ id: 'tap', label: 'Tap tempo' },
+						{ id: 'sync', label: 'Sync' },
+						{ id: 'syncDownbeat', label: 'Sync downbeat' },
+						{ id: 'halve', label: 'Halve tempo' },
+						{ id: 'double', label: 'Double tempo' },
+						{ id: 'tempo', label: 'Set tempo' },
 					],
 				},
 				{
 					type: 'textinput',
 					label: 'BPM',
 					id: 'bpm',
-					isVisible: (action) => { action.options.mode == "setTempo" },
+					isVisible: (action) => {
+						action.options.mode == 'setTempo';
+					},
 				},
-			]
+			],
 		},
-		
+
 		/***** FIXTURE PROPERTY ACTIONS *****/
-		fixtureProps: {
-			label: 'Fixture Properties',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Property name',
-					id: 'property',
-					choices: [
-						{ id: 'on', label: 'On or Off' },
-						{ id: 'dimmer', label: 'Dimmer' },
-						{ id: 'colorWheel', label: 'Color Wheel' },
-						{ id: 'colorRGB', label: 'Color RGB' },
-						{ id: 'colorTemperature', label: 'Color Temperature' },
-						{ id: 'panAngle', label: 'Pan Angle' },
-						{ id: 'tiltAngle', label: 'Tilt Angle' },
-						{ id: 'gobo', label: 'Gobo' },
-						{ id: 'goboRotationMode', label: 'Gobo Rotation Mode' },
-						{ id: 'goboShakeMode', label: 'Gobo Shake Mode' },
-						{ id: 'goboRotationSpeed', label: 'Gobo Rotation Speed' },
-						{ id: 'goboAngle', label: 'Gobo Angle' },
-						{ id: 'goboShakeSpeed', label: 'Gobo Shake Speed' },
-						{ id: 'goboCycleSpeed', label: 'Gobo Cycle Speed' },
-						{ id: 'shutterState', label: 'Shutter State' },
-						{ id: 'strobeSpeed', label: 'Strobe Speed' },
-						{ id: 'shutterPulseSpeed', label: 'Shutter Pulse Speed' },
-						{ id: 'prismType', label: 'Prism Type' },
-						{ id: 'prismRotationMode', label: 'Prism Rotation Mode' },
-						{ id: 'prismRotationSpeed', label: 'Prism Rotation Speed' },
-						{ id: 'PrismAngle', label: 'Prism Angle' },
-						{ id: 'focus', label: 'Focus' },
-						{ id: 'zoomAngle', label: 'Zoom Angle' },
-						{ id: 'irisSize', label: 'Iris Size' },
-					],
-					minChoicesForSearch: 0,
-				},
-				{
-					type: 'textinput',
-					label: 'Value (comma separated for properties with multiple values)',
-					id: 'value',
-					tooltip: 'See OSC section in Lightkey manual for details on specific properties'
-				}
-			]
-		},
+
+		// Probably too complicated to be worth having a dedicated action for. If a user wants to control a specific fixture property, he or she is most likely perfectly capable of doing so using a custom OSC command.
+
+		// fixtureProps: {
+		// 	label: 'Fixture Properties',
+		// 	options: [
+		// 		{
+		// 			type: 'dropdown',
+		// 			label: 'Property name',
+		// 			id: 'property',
+		// 			choices: [
+		// 				{ id: 'on', label: 'On or Off' },
+		// 				{ id: 'dimmer', label: 'Dimmer' },
+		// 				{ id: 'colorWheel', label: 'Color Wheel' },
+		// 				{ id: 'colorRGB', label: 'Color RGB' },
+		// 				{ id: 'colorTemperature', label: 'Color Temperature' },
+		// 				{ id: 'panAngle', label: 'Pan Angle' },
+		// 				{ id: 'tiltAngle', label: 'Tilt Angle' },
+		// 				{ id: 'gobo', label: 'Gobo' },
+		// 				{ id: 'goboRotationMode', label: 'Gobo Rotation Mode' },
+		// 				{ id: 'goboShakeMode', label: 'Gobo Shake Mode' },
+		// 				{ id: 'goboRotationSpeed', label: 'Gobo Rotation Speed' },
+		// 				{ id: 'goboAngle', label: 'Gobo Angle' },
+		// 				{ id: 'goboShakeSpeed', label: 'Gobo Shake Speed' },
+		// 				{ id: 'goboCycleSpeed', label: 'Gobo Cycle Speed' },
+		// 				{ id: 'shutterState', label: 'Shutter State' },
+		// 				{ id: 'strobeSpeed', label: 'Strobe Speed' },
+		// 				{ id: 'shutterPulseSpeed', label: 'Shutter Pulse Speed' },
+		// 				{ id: 'prismType', label: 'Prism Type' },
+		// 				{ id: 'prismRotationMode', label: 'Prism Rotation Mode' },
+		// 				{ id: 'prismRotationSpeed', label: 'Prism Rotation Speed' },
+		// 				{ id: 'PrismAngle', label: 'Prism Angle' },
+		// 				{ id: 'focus', label: 'Focus' },
+		// 				{ id: 'zoomAngle', label: 'Zoom Angle' },
+		// 				{ id: 'irisSize', label: 'Iris Size' },
+		// 			],
+		// 			minChoicesForSearch: 0,
+		// 		},
+		// 		{
+		// 			type: 'textinput',
+		// 			label: 'Value (comma separated for properties with multiple values)',
+		// 			id: 'value',
+		// 			tooltip: 'See OSC section in Lightkey manual for details on specific properties',
+		// 		},
+		// 	],
+		// },
 
 		custom: {
 			label: 'Custom OSC Command',
@@ -527,7 +541,7 @@ instance.prototype.actions = function (system) {
 
 instance.prototype.action = function (action) {
 	var self = this;
-	
+
 	/***** LIVE VIEW ACTIONS *****/
 	if (action.action == 'triggerCue') {
 		let args = [];
@@ -539,22 +553,22 @@ instance.prototype.action = function (action) {
 		];
 		let pageName;
 
-		if(action.options.pageType == "selected") {
-			pageName = "selected";
-		} else if(action.options.pageType == "all") {
-			pageName = "*";
+		if (action.options.pageType == 'selected') {
+			pageName = 'selected';
+		} else if (action.options.pageType == 'all') {
+			pageName = '*';
 		} else {
-			pageName = action.options.pageName.replace(" ", "_");
+			pageName = action.options.pageName.replace(' ', '_');
 		}
 
-		let cueName = action.options.cueName.replace(" ", "_");
+		let cueName = action.options.cueName.replace(' ', '_');
 
-		console.log('/live/' + pageName + "/cue/" + cueName + "/" + action.options.mode);
+		console.log('/live/' + pageName + '/cue/' + cueName + '/' + action.options.mode);
 
 		self.oscSend(
 			self.config.host,
 			self.config.port,
-			'/live/' + pageName + "/cue/" + cueName + "/" + action.options.mode, 
+			'/live/' + pageName + '/cue/' + cueName + '/' + action.options.mode,
 			args
 		);
 	}
@@ -564,34 +578,28 @@ instance.prototype.action = function (action) {
 		args = [
 			{
 				type: 'f',
-				value: action.options.intensity/100,
+				value: action.options.intensity / 100,
 			},
 		];
 		let pageName;
 
-		if(action.options.pageType == "selected") {
-			pageName = "selected";
-		} else if(action.options.pageType == "all") {
-			pageName = "*";
+		if (action.options.pageType == 'selected') {
+			pageName = 'selected';
+		} else if (action.options.pageType == 'all') {
+			pageName = '*';
 		} else {
-			pageName = action.options.pageName.replace(" ", "_");
+			pageName = action.options.pageName.replace(' ', '_');
 		}
 
-		let cueName = action.options.cueName.replace(" ", "_");
+		let cueName = action.options.cueName.replace(' ', '_');
 
-		console.log('/live/' + pageName + "/cue/" + cueName + "/intensity " + action.options.intensity/100);
+		console.log('/live/' + pageName + '/cue/' + cueName + '/intensity ' + action.options.intensity / 100);
 
-		self.oscSend(
-			self.config.host,
-			self.config.port,
-			'/live/' + pageName + "/cue/" + cueName + "/intensity", 
-			args
-		);
+		self.oscSend(self.config.host, self.config.port, '/live/' + pageName + '/cue/' + cueName + '/intensity', args);
 	}
 
 	if (action.action == 'cuelistPlayback') {
-		
-		if(action.options.mode == 'nextCue' || action.options.mode == 'previousCue') {
+		if (action.options.mode == 'nextCue' || action.options.mode == 'previousCue') {
 			let args = [];
 			args = [
 				{
@@ -600,19 +608,9 @@ instance.prototype.action = function (action) {
 				},
 			];
 
-
-			self.oscSend(
-				self.config.host,
-				self.config.port,
-				'/live/' + action.options.mode, 
-				args
-			);
+			self.oscSend(self.config.host, self.config.port, '/live/' + action.options.mode, args);
 		} else {
-			self.oscSend(
-				self.config.host,
-				self.config.port,
-				'/live/' + action.options.mode
-			);
+			self.oscSend(self.config.host, self.config.port, '/live/' + action.options.mode);
 		}
 
 		console.log('/live/' + action.options.mode);
@@ -620,84 +618,87 @@ instance.prototype.action = function (action) {
 
 	if (action.action == 'setXfade') {
 		let args = [];
-			args = [
-				{
-					type: 'f',
-					value: action.options.xfade/100,
-				},
-			];
+		args = [
+			{
+				type: 'f',
+				value: action.options.xfade / 100,
+			},
+		];
 
-			console.log('/live/xfade ' + action.options.xfade/100)
+		console.log('/live/xfade ' + action.options.xfade / 100);
 
-		self.oscSend(
-			self.config.host,
-			self.config.port,
-			'/live/xfade', 
-			args
-		);
+		self.oscSend(self.config.host, self.config.port, '/live/xfade', args);
 	}
 
 	if (action.action == 'skipCue') {
+		let cuelistName = action.options.cuelistName.replace(/\s/g, '_');
+		let cueName = action.options.cueName.replace(/\s/g, '_');
 
-		let cuelistName = action.options.cuelistName.replace(/\s/g, "_");
-		let cueName = action.options.cueName.replace(/\s/g, "_");
-
-		console.log('/live/' + cuelistName + "/cue/" + cueName + "/" + action.options.mode);
+		console.log('/live/' + cuelistName + '/cue/' + cueName + '/' + action.options.mode);
 
 		self.oscSend(
 			self.config.host,
 			self.config.port,
-			'/live/' + cuelistName + "/cue/" + cueName + "/" + action.options.mode
+			'/live/' + cuelistName + '/cue/' + cueName + '/' + action.options.mode
 		);
 	}
-	
+
 	/***** PRESET PALETTE ACTIONS *****/
-	if(action.action == "presetPalette") {
+	if (action.action == 'presetPalette') {
+		let presetPath = action.options.path.replace(/\s/g, '_');
 
-		let presetPath = action.options.path.replace(/\s/g, "_");
+		console.log('/palette/' + presetPath + '/' + action.options.mode);
 
-		console.log('/palette/' + presetPath + "/" + action.options.mode);
+		self.oscSend(self.config.host, self.config.port, '/palette/' + presetPath + '/' + action.options.mode);
+	}
 
-		self.oscSend(
-			self.config.host,
-			self.config.port,
-			'/palette/' + presetPath + "/" + action.options.mode
-		);
+	if (action.action == 'startSequence') {
+		let presetPath = action.options.path.replace(/\s/g, '_');
+
+		console.log('/palette/' + presetPath + '/' + action.options.mode);
+
+		self.oscSend(self.config.host, self.config.port, '/palette/' + presetPath + '/' + action.options.mode);
 	}
 
 	/***** OUTPUT CONTROL ACTIONS *****/
 	if (action.action == 'blindMode') {
-		if(action.options.mode == "enter") {
-			console.log("Sending enter");
-			self.oscSend(
-				self.config.host,
-				self.config.port,
-				'/output/enterBlind/'
-			);
-		}
-		if(action.options.mode == "exit") {
-			console.log("Sending exit");
-			self.oscSend(
-				self.config.host,
-				self.config.port,
-				'/output/exitBlind/'
-			);
-		}
-		if(action.options.mode == "toggle") {
-			console.log("Sending toggle");
-			self.oscSend(
-				self.config.host,
-				self.config.port,
-				'/output/toggleBlind/'
-			);
-		}
-		if(action.options.mode == "cancel") {
-			console.log("Sending cancel");
-			self.oscSend(
-				self.config.host,
-				self.config.port,
-				'/output/cancelBlind/'
-			);
+		console.log('/output/' + action.options.mode);
+		self.oscSend(self.config.host, self.config.port, '/output/' + action.options.mode);
+	}
+
+	if (action.action == 'freezeOutput') {
+		console.log('/output/' + action.options.mode);
+		self.oscSend(self.config.host, self.config.port, '/output/' + action.options.mode);
+	}
+
+	if (action.action == 'masterDimmer') {
+		let args = [];
+		args = [
+			{
+				type: 'f',
+				value: action.options.level / 100,
+			},
+		];
+
+		console.log('/output/master ' + action.options.level);
+		self.oscSend(self.config.host, self.config.port, '/output/master', args);
+	}
+
+	if (action.action == 'beatControl') {
+		if (action.options.mode == 'tempo') {
+			let args = [];
+			args = [
+				{
+					type: 'i',
+					value: action.options.bpm,
+				},
+			];
+
+			console.log('/beat/' + action.options.mode + ' ' + action.options.bpm);
+			self.oscSend(self.config.host, self.config.port, '/beat/' + action.options.mode, args);
+		} else {
+			console.log('/beat/' + action.options.mode);
+			self.oscSend(self.config.host, self.config.port, '/beat/' + action.options.mode);
 		}
 	}
 
