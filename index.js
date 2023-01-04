@@ -60,6 +60,21 @@ instance.prototype.actions = function (system) {
 	var self = this;
 	self.setActions({
 		/***** LIVE VIEW ACTIONS *****/
+		pageSelect: {
+			label: 'Page Select',
+			options: [
+				{
+					type: 'textinput',
+					label: 'Page Name',
+					id: 'pageName',
+				},
+				{
+					type: 'textinput',
+					label: 'Fade Time',
+					id: 'fadeTime'
+				},
+			]
+		},
 		triggerCue: {
 			label: 'Trigger Cue',
 			options: [
@@ -572,6 +587,24 @@ instance.prototype.action = function (action) {
 	var self = this;
 
 	/***** LIVE VIEW ACTIONS *****/
+	if(action.action == 'pageSelect') {
+		pageName = action.options.pageName.replace(' ', '_');
+		let args = [];
+		args = [
+			{
+				type: 'f',
+				value: parseInt(action.options.fadeTime),
+			},
+		];
+
+		self.oscSend(
+			self.config.host,
+			self.config.port,
+			'/live/' + pageName + '/select',
+			args
+		);
+	}
+
 	if (action.action == 'triggerCue') {
 		let args = [];
 		args = [
