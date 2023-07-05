@@ -1,0 +1,26 @@
+{
+  "id": "lightkey",
+  "name": "Lightkey",
+  "shortname": "lightkey",
+  "description": "For Lightkey 4",
+  "manufacturer": "Lightkey",
+  "products": ["Lightkey"],
+  "keywords": ["lightkey", "light", "dmx"],
+  "version": "0.0.1",
+  "license": "MIT",
+  "repository": "git+https://github.com/Drew-Killeen/companion-module-lightkey",
+  "bugs": "https://github.com/Drew-Killeen/companion-module-lightkey/issues",
+  "maintainers": [
+    {
+      "name": "Drew Killeen",
+      "email": "drewkilleen00@gmail.com"
+    }
+  ],
+  "legacyIds": [],
+  "runtime": {
+    "type": "node18",
+    "api": "nodejs-ipc",
+    "apiVersion": "0.0.0",
+    "entrypoint": "../dist/index.js"
+  }
+}
