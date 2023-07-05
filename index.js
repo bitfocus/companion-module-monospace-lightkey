@@ -110,7 +110,7 @@ class LightkeyInstance extends InstanceBase {
 						label: 'Page Name',
 						id: 'pageName',
 						tooltip: 'Find the page name by clicking on the Live dropdown menu in Lightkey',
-						isVisible: (action) => action.options.pageType == 'custom',
+						isVisible: (options) => options.pageType == 'custom',
 					},
 					{
 						type: 'textinput',
@@ -166,8 +166,8 @@ class LightkeyInstance extends InstanceBase {
 						label: 'Page Name',
 						id: 'pageName',
 						tooltip: 'Find the page name by clicking on the Live dropdown menu in Lightkey',
-						isVisible: (action) => {
-							action.options.pageType == 'custom'
+						isVisible: (options) => {
+							return options.pageType == 'custom'
 						},
 					},
 					{
@@ -233,8 +233,8 @@ class LightkeyInstance extends InstanceBase {
 						type: 'textinput',
 						label: 'Fade Time',
 						id: 'fadeTime',
-						isVisible: (action) => {
-							action.options.mode == 'nextCue' || action.options.mode == 'previousCue'
+						isVisible: (options) => {
+							options.mode == 'nextCue' || options.mode == 'previousCue'
 						},
 					},
 				],
@@ -453,8 +453,8 @@ class LightkeyInstance extends InstanceBase {
 						type: 'textinput',
 						label: 'BPM',
 						id: 'bpm',
-						isVisible: (action) => {
-							action.options.mode == 'setTempo'
+						isVisible: (options) => {
+							options.mode == 'setTempo'
 						},
 					},
 				],
@@ -502,16 +502,16 @@ class LightkeyInstance extends InstanceBase {
 							{ id: 'f', label: 'float' },
 							{ id: 's', label: 'string' },
 						],
-						isVisible: (action) => {
-							action.options.numOfValeus >= 1
+						isVisible: (options) => {
+							options.numOfValeus >= 1
 						},
 					},
 					{
 						type: 'textinput',
 						label: 'Value 1',
 						id: 'customValue1',
-						isVisible: (action) => {
-							action.options.numOfValeus >= 1
+						isVisible: (options) => {
+							options.numOfValeus >= 1
 						},
 					},
 					{
@@ -524,16 +524,16 @@ class LightkeyInstance extends InstanceBase {
 							{ id: 'f', label: 'float' },
 							{ id: 's', label: 'string' },
 						],
-						isVisible: (action) => {
-							action.options.numOfValeus >= 2
+						isVisible: (options) => {
+							options.numOfValeus >= 2
 						},
 					},
 					{
 						type: 'textinput',
 						label: 'Value 2',
 						id: 'customValue2',
-						isVisible: (action) => {
-							action.options.numOfValeus >= 2
+						isVisible: (options) => {
+							options.numOfValeus >= 2
 						},
 					},
 					{
@@ -546,16 +546,16 @@ class LightkeyInstance extends InstanceBase {
 							{ id: 'f', label: 'float' },
 							{ id: 's', label: 'string' },
 						],
-						isVisible: (action) => {
-							action.options.numOfValeus >= 3
+						isVisible: (options) => {
+							options.numOfValeus >= 3
 						},
 					},
 					{
 						type: 'textinput',
 						label: 'Value 3',
 						id: 'customValue3',
-						isVisible: (action) => {
-							action.options.numOfValeus >= 3
+						isVisible: (options) => {
+							options.numOfValeus >= 3
 						},
 					},
 				],
