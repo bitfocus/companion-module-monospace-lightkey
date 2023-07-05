@@ -1,6 +1,5 @@
 const { InstanceBase, Regex, runEntrypoint } = require('@companion-module/base')
 const UpgradeScripts = require('./upgrades')
-// import pageSelect from './actions/page-select'
 
 class LightkeyInstance extends InstanceBase {
 	constructor(internal) {
@@ -67,13 +66,13 @@ class LightkeyInstance extends InstanceBase {
 						id: 'fadeTime',
 					},
 				],
-				callback: async (e) => {
-					let pageName = e.options.pageName.replace(' ', '_')
+				callback: async (action) => {
+					let pageName = action.options.pageName.replace(' ', '_')
 					let args = []
 					args = [
 						{
 							type: 'f',
-							value: parseInt(e.options.fadeTime),
+							value: parseInt(action.options.fadeTime),
 						},
 					]
 
@@ -124,27 +123,27 @@ class LightkeyInstance extends InstanceBase {
 						id: 'fadeTime',
 					},
 				],
-				callback: async (e) => {
+				callback: async (action) => {
 					let pageName
 					let args = []
 					args = [
 						{
 							type: 'f',
-							value: parseInt(e.options.fadeTime),
+							value: parseInt(action.options.fadeTime),
 						},
 					]
 
-					if (e.options.pageType == 'selected') {
+					if (action.options.pageType == 'selected') {
 						pageName = 'selected'
-					} else if (e.options.pageType == 'all') {
+					} else if (action.options.pageType == 'all') {
 						pageName = '*'
 					} else {
-						pageName = e.options.pageName.replace(' ', '_')
+						pageName = action.options.pageName.replace(' ', '_')
 					}
 
-					let cueName = e.options.cueName.replace(' ', '_')
+					let cueName = action.options.cueName.replace(' ', '_')
 
-					sendOscMessage('/live/' + pageName + '/cue/' + cueName + '/' + e.options.mode, args)
+					sendOscMessage('/live/' + pageName + '/cue/' + cueName + '/' + action.options.mode, args)
 				},
 			},
 			setCueIntensity: {
@@ -186,25 +185,25 @@ class LightkeyInstance extends InstanceBase {
 						default: '',
 					},
 				],
-				callback: async (e) => {
+				callback: async (action) => {
 					let args = []
 					args = [
 						{
 							type: 'f',
-							value: e.options.intensity / 100,
+							value: action.options.intensity / 100,
 						},
 					]
 					let pageName
 
-					if (e.options.pageType == 'selected') {
+					if (action.options.pageType == 'selected') {
 						pageName = 'selected'
-					} else if (e.options.pageType == 'all') {
+					} else if (action.options.pageType == 'all') {
 						pageName = '*'
 					} else {
-						pageName = e.options.pageName.replace(' ', '_')
+						pageName = action.options.pageName.replace(' ', '_')
 					}
 
-					let cueName = e.options.cueName.replace(' ', '_')
+					let cueName = action.options.cueName.replace(' ', '_')
 
 					sendOscMessage('/live/' + pageName + '/cue/' + cueName + '/intensity', args)
 				},
@@ -238,19 +237,19 @@ class LightkeyInstance extends InstanceBase {
 						},
 					},
 				],
-				callback: async (e) => {
-					if (e.options.mode == 'nextCue' || e.options.mode == 'previousCue') {
+				callback: async (action) => {
+					if (action.options.mode == 'nextCue' || action.options.mode == 'previousCue') {
 						let args = []
 						args = [
 							{
 								type: 'i',
-								value: parseInt(e.options.fadeTime),
+								value: parseInt(action.options.fadeTime),
 							},
 						]
 
-						sendOscMessage('/live/' + e.options.mode, args)
+						sendOscMessage('/live/' + action.options.mode, args)
 					} else {
-						sendOscMessage('/live/' + e.options.mode)
+						sendOscMessage('/live/' + action.options.mode)
 					}
 				},
 			},
@@ -267,12 +266,12 @@ class LightkeyInstance extends InstanceBase {
 						default: 0,
 					},
 				],
-				callback: async (e) => {
+				callback: async (action) => {
 					let args = []
 					args = [
 						{
 							type: 'f',
-							value: e.options.xfade / 100,
+							value: action.options.xfade / 100,
 						},
 					]
 
@@ -304,11 +303,11 @@ class LightkeyInstance extends InstanceBase {
 						tooltip: 'Enter * for all cues',
 					},
 				],
-				callback: async (e) => {
-					let cuelistName = e.options.cuelistName.replace(/\s/g, '_')
-					let cueName = e.options.cueName.replace(/\s/g, '_')
+				callback: async (action) => {
+					let cuelistName = action.options.cuelistName.replace(/\s/g, '_')
+					let cueName = action.options.cueName.replace(/\s/g, '_')
 
-					sendOscMessage('/live/' + cuelistName + '/cue/' + cueName + '/' + e.options.mode)
+					sendOscMessage('/live/' + cuelistName + '/cue/' + cueName + '/' + action.options.mode)
 				},
 			},
 			/***** PRESET PALETTE ACTIONS *****/
@@ -333,10 +332,10 @@ class LightkeyInstance extends InstanceBase {
 						tooltip: 'See Lightkey OSC documentation for more details on how to specify a preset path',
 					},
 				],
-				callback: async (e) => {
-					let presetPath = e.options.path.replace(/\s/g, '_')
+				callback: async (action) => {
+					let presetPath = action.options.path.replace(/\s/g, '_')
 
-					sendOscMessage('/palette/' + presetPath + '/' + e.options.mode)
+					sendOscMessage('/palette/' + presetPath + '/' + action.options.mode)
 				},
 			},
 
@@ -361,10 +360,10 @@ class LightkeyInstance extends InstanceBase {
 						tooltip: 'See Lightkey OSC documentation for more details on how to specify a preset path',
 					},
 				],
-				callback: async (e) => {
-					let presetPath = action.e.path.replace(/\s/g, '_')
+				callback: async (action) => {
+					let presetPath = action.path.replace(/\s/g, '_')
 
-					sendOscMessage('/palette/' + presetPath + '/' + action.e.mode)
+					sendOscMessage('/palette/' + presetPath + '/' + action.mode)
 				},
 			},
 			/***** OUTPUT CONTROL ACTIONS *****/
@@ -384,8 +383,8 @@ class LightkeyInstance extends InstanceBase {
 						],
 					},
 				],
-				callback: async (e) => {
-					sendOscMessage('/output/' + e.options.mode)
+				callback: async (action) => {
+					sendOscMessage('/output/' + action.options.mode)
 				},
 			},
 			freezeOutput: {
@@ -403,8 +402,8 @@ class LightkeyInstance extends InstanceBase {
 						],
 					},
 				],
-				callback: async (e) => {
-					sendOscMessage('/output/' + e.options.mode)
+				callback: async (action) => {
+					sendOscMessage('/output/' + action.options.mode)
 				},
 			},
 
@@ -420,12 +419,12 @@ class LightkeyInstance extends InstanceBase {
 						default: 100,
 					},
 				],
-				callback: async (e) => {
+				callback: async (action) => {
 					let args = []
 					args = [
 						{
 							type: 'f',
-							value: e.options.level / 100,
+							value: action.options.level / 100,
 						},
 					]
 
@@ -458,19 +457,19 @@ class LightkeyInstance extends InstanceBase {
 						},
 					},
 				],
-				callback: async (e) => {
-					if (e.options.mode == 'tempo') {
+				callback: async (action) => {
+					if (action.options.mode == 'tempo') {
 						let args = []
 						args = [
 							{
 								type: 'i',
-								value: e.options.bpm,
+								value: action.options.bpm,
 							},
 						]
 
-						sendOscMessage('/beat/' + e.options.mode, args)
+						sendOscMessage('/beat/' + action.options.mode, args)
 					} else {
-						sendOscMessage('/beat/' + e.options.mode)
+						sendOscMessage('/beat/' + action.options.mode)
 					}
 				},
 			},
@@ -559,67 +558,67 @@ class LightkeyInstance extends InstanceBase {
 						},
 					},
 				],
-				callback: async (e) => {
+				callback: async (action) => {
 					let args = []
 
-					if (e.options.numOfValeus >= 1) {
-						if (e.options.oscType1 == 'i') {
+					if (action.options.numOfValeus >= 1) {
+						if (action.options.oscType1 == 'i') {
 							args.push({
 								type: 'i',
-								value: parseInt(e.options.customValue1),
+								value: parseInt(action.options.customValue1),
 							})
-						} else if (e.options.oscType1 == 'f') {
+						} else if (action.options.oscType1 == 'f') {
 							args.push({
 								type: 'f',
-								value: parseFloat(e.options.customValue1),
+								value: parseFloat(action.options.customValue1),
 							})
-						} else if (e.options.oscType1 == 's') {
+						} else if (action.options.oscType1 == 's') {
 							args.push({
 								type: 's',
-								value: '' + e.options.customValue1,
+								value: '' + action.options.customValue1,
 							})
 						}
 					}
 
-					if (e.options.numOfValeus >= 2) {
-						if (e.options.oscType2 == 'i') {
+					if (action.options.numOfValeus >= 2) {
+						if (action.options.oscType2 == 'i') {
 							args.push({
 								type: 'i',
-								value: parseInt(e.options.customValue2),
+								value: parseInt(action.options.customValue2),
 							})
-						} else if (e.options.oscType2 == 'f') {
+						} else if (action.options.oscType2 == 'f') {
 							args.push({
 								type: 'f',
-								value: parseFloat(e.options.customValue2),
+								value: parseFloat(action.options.customValue2),
 							})
-						} else if (e.options.oscType2 == 's') {
+						} else if (action.options.oscType2 == 's') {
 							args.push({
 								type: 's',
-								value: '' + e.options.customValue2,
+								value: '' + action.options.customValue2,
 							})
 						}
 					}
 
-					if (e.options.numOfValeus >= 3) {
-						if (e.options.oscType3 == 'i') {
+					if (action.options.numOfValeus >= 3) {
+						if (action.options.oscType3 == 'i') {
 							args.push({
 								type: 'i',
-								value: parseInt(e.options.customValue3),
+								value: parseInt(action.options.customValue3),
 							})
-						} else if (e.options.oscType3 == 'f') {
+						} else if (action.options.oscType3 == 'f') {
 							args.push({
 								type: 'f',
-								value: parseFloat(e.options.customValue3),
+								value: parseFloat(action.options.customValue3),
 							})
-						} else if (e.options.oscType3 == 's') {
+						} else if (action.options.oscType3 == 's') {
 							args.push({
 								type: 's',
-								value: '' + e.options.customValue3,
+								value: '' + action.options.customValue3,
 							})
 						}
 					}
 
-					sendOscMessage(e.options.customPath, args)
+					sendOscMessage(action.options.customPath, args)
 				},
 			},
 		})
