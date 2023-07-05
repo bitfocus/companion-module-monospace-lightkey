@@ -6,7 +6,7 @@
   "manufacturer": "Lightkey",
   "products": ["Lightkey"],
   "keywords": ["lightkey", "light", "dmx"],
-  "version": "0.0.1",
+  "version": "0.0.0",
   "license": "MIT",
   "repository": "git+https://github.com/Drew-Killeen/companion-module-lightkey",
   "bugs": "https://github.com/Drew-Killeen/companion-module-lightkey/issues",
@@ -21,6 +21,6 @@
     "type": "node18",
     "api": "nodejs-ipc",
     "apiVersion": "0.0.0",
-    "entrypoint": "../dist/index.js"
+    "entrypoint": "../index.js"
   }
 }
