@@ -1,12 +1,12 @@
 {
 	"id": "lightkey",
-	"name": "lightkey",
-	"shortname": "lightkey",
-	"description": "Direct: OSsC plugin for Companion",
+	"name": "Lightkey",
+	"shortname": "Lightkey",
+	"description": "Module for Lightkey 4",
 	"version": "0.0.0",
 	"license": "MIT",
-	"repository": "git+https://github.com/bitfocus/companion-module-generic-osc.git",
-	"bugs": "https://github.com/bitfocus/companion-module-generic-osc/issues",
+	"repository": "git+https://github.com/Drew-Killeen/companion-module-lightkey",
+	"bugs": "https://github.com/Drew-Killeen/companion-module-lightkey/issues",
 	"maintainers": [
 		{
 			"name": "Drew Killeen",
@@ -21,6 +21,6 @@
 		"entrypoint": "../index.js"
 	},
 	"manufacturer": "Lightkey",
-	"products": ["lightkey"],
-	"keywords": ["Protocol", "Generic"]
+	"products": ["4"],
+	"keywords": ["lightkey", "lighting", "dmx"]
 }
