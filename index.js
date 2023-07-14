@@ -59,20 +59,25 @@ class LightkeyInstance extends InstanceBase {
 						type: 'textinput',
 						label: 'Page Name',
 						id: 'pageName',
+						useVariables: true,
 					},
 					{
 						type: 'textinput',
 						label: 'Fade Time',
 						id: 'fadeTime',
+						useVariables: true,
 					},
 				],
-				callback: async (action) => {
-					let pageName = action.options.pageName.replace(' ', '_')
+				callback: async (action, context) => {
+					let pageName = await context.parseVariablesInString(action.options.pageName)
+
+					let fadeTime = await context.parseVariablesInString(action.options.fadeTime.trim())
+
 					let args = []
 					args = [
 						{
 							type: 'f',
-							value: parseInt(action.options.fadeTime),
+							value: parseInt(fadeTime),
 						},
 					]
 
@@ -110,26 +115,30 @@ class LightkeyInstance extends InstanceBase {
 						id: 'pageName',
 						tooltip: 'Find the page name by clicking on the Live dropdown menu in Lightkey',
 						isVisible: (options) => options.pageType == 'custom',
+						useVariables: true,
 					},
 					{
 						type: 'textinput',
 						label: 'Cue Name',
 						id: 'cueName',
 						tooltip: 'Enter * for all cuelists',
+						useVariables: true,
 					},
 					{
 						type: 'textinput',
 						label: 'Fade Time',
 						id: 'fadeTime',
+						useVariables: true,
 					},
 				],
-				callback: async (action) => {
+				callback: async (action, context) => {
+					let fadeTime = await context.parseVariablesInString(action.options.fadeTime.trim())
 					let pageName
 					let args = []
 					args = [
 						{
 							type: 'f',
-							value: parseInt(action.options.fadeTime),
+							value: parseInt(fadeTime),
 						},
 					]
 
@@ -138,10 +147,12 @@ class LightkeyInstance extends InstanceBase {
 					} else if (action.options.pageType == 'all') {
 						pageName = '*'
 					} else {
-						pageName = action.options.pageName.replace(' ', '_')
+						pageName = await context.parseVariablesInString(action.options.pageName.trim())
+						pageName = pageName.replace(' ', '_')
 					}
 
-					let cueName = action.options.cueName.replace(' ', '_')
+					let cueName = await context.parseVariablesInString(action.options.cueName)
+					cueName = cueName.replace(' ', '_')
 
 					sendOscMessage('/live/' + pageName + '/cue/' + cueName + '/' + action.options.mode, args)
 				},
@@ -165,6 +176,7 @@ class LightkeyInstance extends InstanceBase {
 						label: 'Page Name',
 						id: 'pageName',
 						tooltip: 'Find the page name by clicking on the Live dropdown menu in Lightkey',
+						useVariables: true,
 						isVisible: (options) => {
 							return options.pageType == 'custom'
 						},
@@ -173,26 +185,27 @@ class LightkeyInstance extends InstanceBase {
 						type: 'textinput',
 						label: 'Cue Name',
 						id: 'cueName',
+						useVariables: true,
 						tooltip: 'Enter * for all cuelists',
 					},
 					{
-						type: 'number',
+						type: 'textinput',
 						label: 'Intensity Level',
 						id: 'intensity',
 						tooltip: 'Enter value between 0 and 100',
-						min: 0,
-						max: 100,
-						default: '',
+						useVariables: true,
 					},
 				],
-				callback: async (action) => {
+				callback: async (action, context) => {
+					let intensity = await context.parseVariablesInString(action.options.intensity.trim())
 					let args = []
 					args = [
 						{
 							type: 'f',
-							value: action.options.intensity / 100,
+							value: intensity / 100,
 						},
 					]
+
 					let pageName
 
 					if (action.options.pageType == 'selected') {
@@ -200,10 +213,12 @@ class LightkeyInstance extends InstanceBase {
 					} else if (action.options.pageType == 'all') {
 						pageName = '*'
 					} else {
-						pageName = action.options.pageName.replace(' ', '_')
+						pageName = await context.parseVariablesInString(action.options.pageName.trim())
+						pageName = pageName.replace(' ', '_')
 					}
 
-					let cueName = action.options.cueName.replace(' ', '_')
+					let cueName = await context.parseVariablesInString(action.options.cueName.trim())
+					cueName = cueName.replace(' ', '_')
 
 					sendOscMessage('/live/' + pageName + '/cue/' + cueName + '/intensity', args)
 				},
@@ -232,18 +247,20 @@ class LightkeyInstance extends InstanceBase {
 						type: 'textinput',
 						label: 'Fade Time',
 						id: 'fadeTime',
+						useVariables: true,
 						isVisible: (options) => {
 							options.mode == 'nextCue' || options.mode == 'previousCue'
 						},
 					},
 				],
-				callback: async (action) => {
+				callback: async (action, context) => {
+					let fadeTime = await context.parseVariablesInString(action.options.fadeTime.trim())
 					if (action.options.mode == 'nextCue' || action.options.mode == 'previousCue') {
 						let args = []
 						args = [
 							{
 								type: 'i',
-								value: parseInt(action.options.fadeTime),
+								value: parseInt(fadeTime),
 							},
 						]
 
@@ -295,17 +312,21 @@ class LightkeyInstance extends InstanceBase {
 						label: 'Cuelist Name',
 						id: 'cuelistName',
 						tooltip: 'Find the cuelist name by clicking on the Live dropdown menu in Lightkey',
+						useVariables: true,
 					},
 					{
 						type: 'textinput',
 						label: 'Cue Name',
 						id: 'cueName',
 						tooltip: 'Enter * for all cues',
+						useVariables: true,
 					},
 				],
-				callback: async (action) => {
-					let cuelistName = action.options.cuelistName.replace(/\s/g, '_')
-					let cueName = action.options.cueName.replace(/\s/g, '_')
+				callback: async (action, context) => {
+					let cuelistName = await context.parseVariablesInString(action.options.cuelistName.trim())
+					cuelistName = cuelistName.replace(/\s/g, '_')
+					let cueName = await context.parseVariablesInString(action.options.cueName.trim())
+					cueName = cueName.replace(/\s/g, '_')
 
 					sendOscMessage('/live/' + cuelistName + '/cue/' + cueName + '/' + action.options.mode)
 				},
@@ -411,20 +432,20 @@ class LightkeyInstance extends InstanceBase {
 				name: 'Master Dimmer Level',
 				options: [
 					{
-						type: 'number',
+						type: 'textinput',
 						label: 'Master Dimmer Level',
 						id: 'level',
-						min: 0,
-						max: 100,
-						default: 100,
+						default: '100',
+						useVariables: true,
 					},
 				],
-				callback: async (action) => {
+				callback: async (action, context) => {
+					let level = await context.parseVariablesInString(action.options.level.trim())
 					let args = []
 					args = [
 						{
 							type: 'f',
-							value: action.options.level / 100,
+							value: level / 100,
 						},
 					]
 
@@ -452,18 +473,22 @@ class LightkeyInstance extends InstanceBase {
 						type: 'textinput',
 						label: 'BPM',
 						id: 'bpm',
+						useVariables: true,
+						min: 30,
+						max: 400,
 						isVisible: (options) => {
 							options.mode == 'setTempo'
 						},
 					},
 				],
-				callback: async (action) => {
+				callback: async (action, context) => {
+					let bpm = await context.parseVariablesInString(action.options.bpm.trim())
 					if (action.options.mode == 'tempo') {
 						let args = []
 						args = [
 							{
 								type: 'i',
-								value: action.options.bpm,
+								value: bpm,
 							},
 						]
 
