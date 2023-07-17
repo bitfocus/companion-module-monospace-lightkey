@@ -5,8 +5,8 @@
 	"description": "Module for Lightkey 4",
 	"version": "0.0.0",
 	"license": "MIT",
-	"repository": "git+https://github.com/Drew-Killeen/companion-module-lightkey",
-	"bugs": "https://github.com/Drew-Killeen/companion-module-lightkey/issues",
+	"repository": "git+https://github.com/bitfocus/companion-module-monospace-lightkey",
+	"bugs": "https://github.com/bitfocus/companion-module-monospace-lightkey/issues",
 	"maintainers": [
 		{
 			"name": "Drew Killeen",
