@@ -9,7 +9,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/Drew-Killeen/companion-module-lightkey"
+		"url": "git+https://github.com/bitfocus/companion-module-monospace-lightkey"
 	},
 	"dependencies": {
 		"@companion-module/base": "~1.4.0"
