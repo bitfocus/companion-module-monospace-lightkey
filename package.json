@@ -1,7 +1,7 @@
 {
 	"name": "lightkey",
 	"version": "2.2.0",
-	"main": "lightkey.js",
+	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"format": "prettier -w ."
