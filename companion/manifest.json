@@ -1,8 +1,8 @@
 {
-	"id": "lightkey",
-	"name": "Lightkey",
+	"id": "monospace-lightkey",
+	"name": "monospace-lightkey",
 	"shortname": "Lightkey",
-	"description": "Module for Lightkey 4",
+	"description": "Module for Monospace Lightkey 4",
 	"version": "0.0.0",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-monospace-lightkey",
@@ -13,7 +13,7 @@
 			"email": "drewkilleen00@gmail.com"
 		}
 	],
-	"legacyIds": [],
+	"legacyIds": ["lightkey"],
 	"runtime": {
 		"type": "node18",
 		"api": "nodejs-ipc",
