@@ -1,7 +1,13 @@
-const { InstanceBase, Regex, runEntrypoint } = require('@companion-module/base')
-const UpgradeScripts = require('./upgrades')
+import { InstanceBase, InstanceStatus, Regex } from '@companion-module/base'
+import UpgradeScripts from './upgrades.js'
+import { LightkeyApi } from './lightkey-api.js'
+import * as feedbacks from './feedbacks.js'
 
-class LightkeyInstance extends InstanceBase {
+export { UpgradeScripts }
+
+const str = (value) => String(value ?? '').trim()
+
+export default class LightkeyInstance extends InstanceBase {
 	constructor(internal) {
 		super(internal)
 	}
@@ -9,17 +15,34 @@ class LightkeyInstance extends InstanceBase {
 	async init(config) {
 		this.config = config
 
-		this.updateStatus('ok')
+		this.updateStatus(InstanceStatus.Ok)
 
 		this.updateActions() // export actions
+
+		// Optional: live state from the lightkey-api agent. Nothing starts unless an address is set.
+		this.lkApi = new LightkeyApi({
+			log: (msg) => this.log('debug', msg),
+			onFixtures: (names) => feedbacks.define(this, names),
+			onState: (changed) => feedbacks.publish(this, changed),
+			onStatus: (ok, message) => {
+				this.updateStatus(ok ? InstanceStatus.Ok : InstanceStatus.ConnectionFailure, ok ? null : message)
+				this.checkFeedbacks('lightkeyApiConnected')
+			},
+		})
+		this.lkApi.start(config.apiAddress)
 	}
 	// When module gets deleted
 	async destroy() {
 		this.log('debug', 'destroy')
+		if (this.lkApi) this.lkApi.stop()
 	}
 
 	async configUpdated(config) {
 		this.config = config
+		if (this.lkApi) {
+			this.updateStatus(InstanceStatus.Ok)
+			this.lkApi.start(config.apiAddress)
+		}
 	}
 
 	// Return config fields for web config
@@ -40,6 +63,22 @@ class LightkeyInstance extends InstanceBase {
 				regex: Regex.PORT,
 				default: '21600',
 			},
+			{
+				type: 'static-text',
+				id: 'apiInfo',
+				width: 12,
+				label: 'Live feedback (optional)',
+				value:
+					'Lightkey sends no state back over OSC. To get feedbacks, variables and presets, run lightkey-api 0.4.3 or newer on the Lightkey computer (github.com/huntrw6/lightkey-api) and enter its address below. Leave it empty to use only the actions.',
+			},
+			{
+				type: 'textinput',
+				id: 'apiAddress',
+				label: 'lightkey-api address',
+				width: 8,
+				regex: '/^$|^(https?:\\/\\/)?[A-Za-z0-9.-]+(:\\d{1,5})?\\/?$/',
+				tooltip: 'For example 10.30.0.211 (port 8770 is the default). The agent must allow this computer.',
+			},
 		]
 	}
 
@@ -47,7 +86,7 @@ class LightkeyInstance extends InstanceBase {
 		const sendOscMessage = (path, args) => {
 			this.log('debug', `Sending OSC ${this.config.host}:${this.config.port} ${path}`)
 			this.log('debug', `Sending Args ${JSON.stringify(args)}`)
-			this.oscSend(this.config.host, this.config.port, path, args)
+			this.oscSend(this.config.host, Number(this.config.port), path, args || [])
 		}
 
 		this.setActionDefinitions({
@@ -68,10 +107,10 @@ class LightkeyInstance extends InstanceBase {
 						useVariables: true,
 					},
 				],
-				callback: async (action, context) => {
-					let pageName = await context.parseVariablesInString(action.options.pageName)
+				callback: async (action) => {
+					let pageName = action.options.pageName
 
-					let fadeTime = await context.parseVariablesInString(action.options.fadeTime.trim())
+					let fadeTime = str(action.options.fadeTime)
 
 					let args = []
 					args = [
@@ -102,6 +141,7 @@ class LightkeyInstance extends InstanceBase {
 						type: 'dropdown',
 						label: 'Page Type',
 						id: 'pageType',
+						disableAutoExpression: true,
 						default: 'custom',
 						choices: [
 							{ id: 'selected', label: 'Currently Selected Page' },
@@ -114,7 +154,7 @@ class LightkeyInstance extends InstanceBase {
 						label: 'Page Name',
 						id: 'pageName',
 						tooltip: 'Find the page name by clicking on the Live dropdown menu in Lightkey',
-						isVisible: (options) => options.pageType == 'custom',
+						isVisibleExpression: "$(options:pageType) == 'custom'",
 						useVariables: true,
 					},
 					{
@@ -131,8 +171,8 @@ class LightkeyInstance extends InstanceBase {
 						useVariables: true,
 					},
 				],
-				callback: async (action, context) => {
-					let fadeTime = await context.parseVariablesInString(action.options.fadeTime.trim())
+				callback: async (action) => {
+					let fadeTime = str(action.options.fadeTime)
 					let pageName
 					let args = []
 					args = [
@@ -147,11 +187,15 @@ class LightkeyInstance extends InstanceBase {
 					} else if (action.options.pageType == 'all') {
 						pageName = '*'
 					} else {
-						pageName = await context.parseVariablesInString(action.options.pageName.trim())
+						pageName = str(action.options.pageName)
+						if (!pageName) {
+							this.log('warn', 'Page type is Custom but no page name is set on this button, nothing sent')
+							return
+						}
 						pageName = pageName.replace(' ', '_')
 					}
 
-					let cueName = await context.parseVariablesInString(action.options.cueName)
+					let cueName = str(action.options.cueName)
 					cueName = cueName.replace(' ', '_')
 
 					sendOscMessage('/live/' + pageName + '/cue/' + cueName + '/' + action.options.mode, args)
@@ -164,6 +208,7 @@ class LightkeyInstance extends InstanceBase {
 						type: 'dropdown',
 						label: 'Page Type',
 						id: 'pageType',
+						disableAutoExpression: true,
 						default: 'custom',
 						choices: [
 							{ id: 'selected', label: 'Currently Selected Page' },
@@ -177,9 +222,7 @@ class LightkeyInstance extends InstanceBase {
 						id: 'pageName',
 						tooltip: 'Find the page name by clicking on the Live dropdown menu in Lightkey',
 						useVariables: true,
-						isVisible: (options) => {
-							return options.pageType == 'custom'
-						},
+						isVisibleExpression: "$(options:pageType) == 'custom'",
 					},
 					{
 						type: 'textinput',
@@ -196,8 +239,8 @@ class LightkeyInstance extends InstanceBase {
 						useVariables: true,
 					},
 				],
-				callback: async (action, context) => {
-					let intensity = await context.parseVariablesInString(action.options.intensity.trim())
+				callback: async (action) => {
+					let intensity = str(action.options.intensity)
 					let args = []
 					args = [
 						{
@@ -213,11 +256,15 @@ class LightkeyInstance extends InstanceBase {
 					} else if (action.options.pageType == 'all') {
 						pageName = '*'
 					} else {
-						pageName = await context.parseVariablesInString(action.options.pageName.trim())
+						pageName = str(action.options.pageName)
+						if (!pageName) {
+							this.log('warn', 'Page type is Custom but no page name is set on this button, nothing sent')
+							return
+						}
 						pageName = pageName.replace(' ', '_')
 					}
 
-					let cueName = await context.parseVariablesInString(action.options.cueName.trim())
+					let cueName = str(action.options.cueName)
 					cueName = cueName.replace(' ', '_')
 
 					sendOscMessage('/live/' + pageName + '/cue/' + cueName + '/intensity', args)
@@ -231,6 +278,7 @@ class LightkeyInstance extends InstanceBase {
 						type: 'dropdown',
 						label: 'Mode',
 						id: 'mode',
+						disableAutoExpression: true,
 						default: 'toggle',
 						choices: [
 							{ id: 'start', label: 'Start' },
@@ -248,13 +296,11 @@ class LightkeyInstance extends InstanceBase {
 						label: 'Fade Time',
 						id: 'fadeTime',
 						useVariables: true,
-						isVisible: (options) => {
-							options.mode == 'nextCue' || options.mode == 'previousCue'
-						},
+						isVisibleExpression: "$(options:mode) == 'nextCue' || $(options:mode) == 'previousCue'",
 					},
 				],
-				callback: async (action, context) => {
-					let fadeTime = await context.parseVariablesInString(action.options.fadeTime.trim())
+				callback: async (action) => {
+					let fadeTime = str(action.options.fadeTime)
 					if (action.options.mode == 'nextCue' || action.options.mode == 'previousCue') {
 						let args = []
 						args = [
@@ -322,10 +368,10 @@ class LightkeyInstance extends InstanceBase {
 						useVariables: true,
 					},
 				],
-				callback: async (action, context) => {
-					let cuelistName = await context.parseVariablesInString(action.options.cuelistName.trim())
+				callback: async (action) => {
+					let cuelistName = str(action.options.cuelistName)
 					cuelistName = cuelistName.replace(/\s/g, '_')
-					let cueName = await context.parseVariablesInString(action.options.cueName.trim())
+					let cueName = str(action.options.cueName)
 					cueName = cueName.replace(/\s/g, '_')
 
 					sendOscMessage('/live/' + cuelistName + '/cue/' + cueName + '/' + action.options.mode)
@@ -354,7 +400,7 @@ class LightkeyInstance extends InstanceBase {
 					},
 				],
 				callback: async (action) => {
-					let presetPath = action.options.path.replace(/\s/g, '_')
+					let presetPath = str(action.options.path).replace(/\s/g, '_')
 
 					sendOscMessage('/palette/' + presetPath + '/' + action.options.mode)
 				},
@@ -382,9 +428,13 @@ class LightkeyInstance extends InstanceBase {
 					},
 				],
 				callback: async (action) => {
-					let presetPath = action.path.replace(/\s/g, '_')
+					const presetPath = str(action.options.path).replace(/\s/g, '_')
+					if (!presetPath) {
+						this.log('warn', 'Start/Stop Sequence has no path set, nothing sent')
+						return
+					}
 
-					sendOscMessage('/palette/' + presetPath + '/' + action.mode)
+					sendOscMessage('/palette/' + presetPath + '/' + action.options.mode)
 				},
 			},
 			/***** OUTPUT CONTROL ACTIONS *****/
@@ -439,8 +489,8 @@ class LightkeyInstance extends InstanceBase {
 						useVariables: true,
 					},
 				],
-				callback: async (action, context) => {
-					let level = await context.parseVariablesInString(action.options.level.trim())
+				callback: async (action) => {
+					let level = str(action.options.level)
 					let args = []
 					args = [
 						{
@@ -459,6 +509,7 @@ class LightkeyInstance extends InstanceBase {
 						type: 'dropdown',
 						label: 'Mode',
 						id: 'mode',
+						disableAutoExpression: true,
 						default: 'tempo',
 						choices: [
 							{ id: 'tap', label: 'Tap tempo' },
@@ -476,13 +527,11 @@ class LightkeyInstance extends InstanceBase {
 						useVariables: true,
 						min: 30,
 						max: 400,
-						isVisible: (options) => {
-							options.mode == 'setTempo'
-						},
+						isVisibleExpression: "$(options:mode) == 'tempo'",
 					},
 				],
-				callback: async (action, context) => {
-					let bpm = await context.parseVariablesInString(action.options.bpm.trim())
+				callback: async (action) => {
+					let bpm = str(action.options.bpm)
 					if (action.options.mode == 'tempo') {
 						let args = []
 						args = [
@@ -512,6 +561,7 @@ class LightkeyInstance extends InstanceBase {
 						type: 'number',
 						label: 'Number of Additional Values',
 						id: 'numOfValeus',
+						disableAutoExpression: true,
 						default: 0,
 						min: 0,
 						max: 3,
@@ -526,17 +576,13 @@ class LightkeyInstance extends InstanceBase {
 							{ id: 'f', label: 'float' },
 							{ id: 's', label: 'string' },
 						],
-						isVisible: (options) => {
-							options.numOfValeus >= 1
-						},
+						isVisibleExpression: '$(options:numOfValeus) >= 1',
 					},
 					{
 						type: 'textinput',
 						label: 'Value 1',
 						id: 'customValue1',
-						isVisible: (options) => {
-							options.numOfValeus >= 1
-						},
+						isVisibleExpression: '$(options:numOfValeus) >= 1',
 					},
 					{
 						type: 'dropdown',
@@ -548,17 +594,13 @@ class LightkeyInstance extends InstanceBase {
 							{ id: 'f', label: 'float' },
 							{ id: 's', label: 'string' },
 						],
-						isVisible: (options) => {
-							options.numOfValeus >= 2
-						},
+						isVisibleExpression: '$(options:numOfValeus) >= 2',
 					},
 					{
 						type: 'textinput',
 						label: 'Value 2',
 						id: 'customValue2',
-						isVisible: (options) => {
-							options.numOfValeus >= 2
-						},
+						isVisibleExpression: '$(options:numOfValeus) >= 2',
 					},
 					{
 						type: 'dropdown',
@@ -570,17 +612,13 @@ class LightkeyInstance extends InstanceBase {
 							{ id: 'f', label: 'float' },
 							{ id: 's', label: 'string' },
 						],
-						isVisible: (options) => {
-							options.numOfValeus >= 3
-						},
+						isVisibleExpression: '$(options:numOfValeus) >= 3',
 					},
 					{
 						type: 'textinput',
 						label: 'Value 3',
 						id: 'customValue3',
-						isVisible: (options) => {
-							options.numOfValeus >= 3
-						},
+						isVisibleExpression: '$(options:numOfValeus) >= 3',
 					},
 				],
 				callback: async (action) => {
@@ -649,5 +687,3 @@ class LightkeyInstance extends InstanceBase {
 		})
 	}
 }
-
-runEntrypoint(LightkeyInstance, UpgradeScripts)

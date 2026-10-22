@@ -1,10 +1,11 @@
 {
 	"name": "monospace-lightkey",
 	"version": "2.2.2",
-	"main": "index.js",
+	"main": "main.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"format": "prettier -w ."
+		"test": "node --test \"test/*.test.js\"",
+		"format": "prettier -w .",
+		"package": "companion-module-build"
 	},
 	"license": "MIT",
 	"repository": {
@@ -12,10 +13,16 @@
 		"url": "git+https://github.com/bitfocus/companion-module-monospace-lightkey"
 	},
 	"dependencies": {
-		"@companion-module/base": "~1.4.0"
+		"@companion-module/base": "~2.0.4"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "^2.8.0"
+		"@companion-module/tools": "^3.1.1",
+		"prettier": "^3.9.9"
 	},
+	"type": "module",
+	"engines": {
+		"node": "^22.20"
+	},
+	"packageManager": "yarn@4.18.1",
 	"prettier": "@companion-module/tools/.prettierrc.json"
 }
