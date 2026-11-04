@@ -4,8 +4,7 @@
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"format": "prettier -w .",
-		"build": "node --check index.js && node --check upgrades.js"
+		"format": "prettier -w ."
 	},
 	"license": "MIT",
 	"repository": {
